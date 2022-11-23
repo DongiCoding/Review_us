@@ -17,6 +17,6 @@
 	
 	<!-- 사용할 SQL 매퍼 위치 지정 -->
 	<mappers>
-		<mapper resource="mappings/*-mapper.xml"></mapper>
+		<mapper resource="mappings/board-mapper.xml"></mapper>
 	</mappers>
 </configuration>
