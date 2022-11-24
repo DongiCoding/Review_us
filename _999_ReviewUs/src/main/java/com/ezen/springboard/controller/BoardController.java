@@ -1,12 +1,19 @@
 package com.ezen.springboard.controller;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ezen.springboard.service.board.BoardService;
+import com.ezen.springboard.vo.BoardVO;
+import com.ezen.springboard.vo.UserVO;
 
 @Controller
+@RequestMapping("/board")
 public class BoardController {
 	@Autowired
 	private BoardService boardService;
@@ -26,10 +33,28 @@ public class BoardController {
 //		boardService.login();
 //	}
 	
+	// 게시글 등록 화면으로 이동
+	@GetMapping("insertBoard.do")
+	public String insertBoardView(HttpSession session) {
+		UserVO loginUser = (UserVO)session.getAttribute("loginUser");
+		
+		if(loginUser == null) {
+			return "redirect:/user/login.do";
+		}
+		
+		return "board/insertBoard";
+	}
 	
-	
-	
-	
+	// 게시글 등록
+	@PostMapping("/insertBoard.do")
+	public String insertBoard(BoardVO boardVO) {
+		boardService.insertBoard(boardVO);
+		
+		// 등록 후 게시글 목록으로 이동
+		return "redirect:/board/getBoardList.do";
+		// 등록 후 게시글 상세로 이동
+		//return "redirect:/board/getBoard.do?boardNo=" + boardVO.getBoardVO();
+	}
 	
 	
 	

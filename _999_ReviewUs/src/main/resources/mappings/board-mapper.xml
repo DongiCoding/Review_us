@@ -8,12 +8,12 @@
 	<insert id="insertBoard" parameterType="board">
 		INSERT INTO BOARD
 		VALUES (
-					(SELECT IFNULL(MAX(A.BOARD_NO), 0) + 1 FROM BOARD A),
-					#{boardTitle},
-					#{boardContent},
-					#{boardWriter},
-					now(),
-					0
+			(SELECT IFNULL(MAX(A.BOARD_NO), 0) + 1 FROM BOARD A),
+			#{boardTitle},
+			#{boardMain},
+			#{userId},
+			now(),
+			0
 			   )
 	</insert>
 	

@@ -1,10 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
-<title>¸®ºä ¾²±â</title>
+<meta charset="UTF-8">
+<title>ë¦¬ë·° ì“°ê¸°</title>
 <style>
 	 #container { width: 800px; margin: 0 auto;}
 	 #category { width: 15%; height: 28px; margin-bottom: 10px;}
@@ -12,7 +12,7 @@
 	   display: none;
 	 }
 	 #title { margin-bottom: 10px; width:90%; height: 30px; border-width: 0 0 1px 0; font-size: 18px;}
-	 #uploadFile { margin-top:8px; margin-bottom: 3px;}
+	 #uploadFile { margin-top:8px;}
 	 #star { margin-bottom: 10px;}
 	 #boardForm div{
 	     display: inline-block;
@@ -36,335 +36,104 @@
 	 #boardForm>div input[type=radio]:checked ~ label{
 	     text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
 	 }
-	 #contents {
-	     width: 100%;
-	     height: 150px;
-	     padding: 10px;
-	     box-sizing: border-box;
-	     border: solid 1.5px #D3D3D3;
-	     border-radius: 5px;
-	     font-size: 16px;
-	     resize: none;
-	 }
-	 #btns { margin: 10px auto; text-align: center;}
+	 #content { margin-bottom: 5px;}
+	 #searchGeo { margin-bottom: 5px; font-size: 18px;}
+	 #btns { margin: 10px;}
 	 #btns>button { width: 80px; height: 30px; font-size: 18px;}
-	 
- 	.map_wrap, .map_wrap * {margin:0;padding:0;font-family:'Malgun Gothic',dotum,'µ¸¿ò',sans-serif;font-size:12px;}
-	.map_wrap a, .map_wrap a:hover, .map_wrap a:active{color:#000;text-decoration: none;}
-	.map_wrap {position:relative;width:100%;height:500px;}
-	#menu_wrap {position:absolute;top:0;left:0;bottom:0;width:250px;margin:10px 0 30px 10px;padding:5px;overflow-y:auto;background:rgba(255, 255, 255, 0.7);z-index: 1;font-size:12px;border-radius: 10px;}
-	.bg_white {background:#fff;}
-	#menu_wrap hr {display: block; height: 1px;border: 0; border-top: 2px solid #5F5F5F;margin:3px 0;}
-	#menu_wrap .option{text-align: center;}
-	#menu_wrap .option p {margin:10px 0;}  
-	#menu_wrap .option button {margin-left:5px;}
-	#placesList li {list-style: none;}
-	#placesList .item {position:relative;border-bottom:1px solid #888;overflow: hidden;cursor: pointer;min-height: 65px;}
-	#placesList .item span {display: block;margin-top:4px;}
-	#placesList .item h5, #placesList .item .info {text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
-	#placesList .item .info{padding:10px 0 10px 55px;}
-	#placesList .info .gray {color:#8a8a8a;}
-	#placesList .info .jibun {padding-left:26px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;}
-	#placesList .info .tel {color:#009900;}
-	#placesList .item .markerbg {float:left;position:absolute;width:36px; height:37px;margin:10px 0 0 10px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;}
-	#placesList .item .marker_1 {background-position: 0 -10px;}
-	#placesList .item .marker_2 {background-position: 0 -56px;}
-	#placesList .item .marker_3 {background-position: 0 -102px}
-	#placesList .item .marker_4 {background-position: 0 -148px;}
-	#placesList .item .marker_5 {background-position: 0 -194px;}
-	#placesList .item .marker_6 {background-position: 0 -240px;}
-	#placesList .item .marker_7 {background-position: 0 -286px;}
-	#placesList .item .marker_8 {background-position: 0 -332px;}
-	#placesList .item .marker_9 {background-position: 0 -378px;}
-	#placesList .item .marker_10 {background-position: 0 -423px;}
-	#placesList .item .marker_11 {background-position: 0 -470px;}
-	#placesList .item .marker_12 {background-position: 0 -516px;}
-	#placesList .item .marker_13 {background-position: 0 -562px;}
-	#placesList .item .marker_14 {background-position: 0 -608px;}
-	#placesList .item .marker_15 {background-position: 0 -654px;}
-	#pagination {margin:10px auto;text-align: center;}
-	#pagination a {display:inline-block;margin-right:10px;}
-	#pagination .on {font-weight: bold; cursor: default;color:#777;}
+	 #btnList { float: left;}
+     #btnDone { float: right;}
+     #btnCancel { float: right; margin-right: 10px;}
+ 	
 </style>
 </head>
 <body>
 <jsp:include page="${pageContext.request.contextPath }/header.jsp"></jsp:include>
 <div id="container">
-	<h3>¸®ºä ¾²±â</h3>
+	<h3>ë¦¬ë·° ì“°ê¸°</h3>
 	<form name="boardForm" id="boardForm" action="/board/insertBoard.do" method="post">
-		<c:choose>
-			<c:when test="${loginUser.userRole eq 'Admin'}">
-				<select name="category" id="category" required>
-					<option value="" disabled selected>CATEGORY</option>
-					<option value="NOTICES" id="notices">NOTICES</option>
-					<option value="HOTELS">HOTELS</option>
-					<option value="DESSERT">DESSERT</option>
-					<option value="BARS&PUBS">BARS&amp;PUBS</option>
-					<option value="RESTAURANT">RESTAURANT</option>
-				</select>
-			</c:when>
-			<c:otherwise>
-				<select name="category" id="category" required>
-					<option value="" disabled selected>CATEGORY</option>
-					<option value="HOTELS">HOTELS</option>
-					<option value="DESSERT">DESSERT</option>
-					<option value="BARS&PUBS">BARS&amp;PUBS</option>
-					<option value="RESTAURANT">RESTAURANT</option>
-				</select>
-			</c:otherwise>
-		</c:choose><br>
-		<input type="text" name="title" id="title" placeholder="Á¦¸ñ"><br>
-		<label for="userId" id="boardWriter">ÀÛ¼ºÀÚ: </label><input type="text" name="boardWriter" value="${loginUser.userId}" readonly>
+		<select name="boardCate" id="boardCate" required>
+			<option value="" disabled selected>CATEGORY</option>
+			<option value="HOTELS">HOTELS</option>
+			<option value="DESSERT">DESSERT</option>
+			<option value="BARS&PUBS">BARS&amp;PUBS</option>
+			<option value="RESTAURANT">RESTAURANT</option>
+		</select>
+		<input type="text" name="boardTitle" id="boardTitle" placeholder="ì œëª©"><br>
+		<label for="userId" id="userId">ì‘ì„±ì: </label><input type="text" name="userId" value="${loginUser.userId}" readonly><br>
 		<input type="file" name="uploadFile" id="uploadFile"><br>
 		<div id="star">
-			<span class="text-bold">º°Á¡À» ¼±ÅÃÇØÁÖ¼¼¿ä</span>
-			<input type="radio" name="reviewStar" value="5" id="rate1"><label for="rate1">¡Ú</label>
-			<input type="radio" name="reviewStar" value="4" id="rate2"><label for="rate2">¡Ú</label>
-			<input type="radio" name="reviewStar" value="3" id="rate3"><label for="rate3">¡Ú</label>
-			<input type="radio" name="reviewStar" value="2" id="rate4"><label for="rate4">¡Ú</label>
-			<input type="radio" name="reviewStar" value="1" id="rate5"><label for="rate5">¡Ú</label>
+			<span class="text-bold">ë³„ì ì„ ì„ íƒí•´ì£¼ì„¸ìš”</span>
+			<input type="radio" name="boardStar" value="5" id="rate1"><label for="rate1">â˜…</label>
+			<input type="radio" name="boardStar" value="4" id="rate2"><label for="rate2">â˜…</label>
+			<input type="radio" name="boardStar" value="3" id="rate3"><label for="rate3">â˜…</label>
+			<input type="radio" name="boardStar" value="2" id="rate4"><label for="rate4">â˜…</label>
+			<input type="radio" name="boardStar" value="1" id="rate5"><label for="rate5">â˜…</label>
 		</div>
-		<textarea name="content" id="content" cols="116" rows="30"></textarea>
-		<div class="map_wrap">
-			<div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
-			
-			<div id="menu_wrap" class="bg_white">
-				<div class="option">
-					<div>
-						<input type="button" id="searchBtn" onclick="searchPlaces()" value="°Ë»ö">
-					</div>
-				</div>
-				<hr>
-				<ul id="placesList"></ul>
-				<div id="pagination"></div>
-			</div>
-		</div>
-		<div id="btns">
-			<button type="reset" id="btnCancel">Ãë¼Ò</button>
-			<button type="submit" id="btnDone">µî·Ï</button>
-			<button id="btnList">¸ñ·Ï</button>
-		</div>
+		<textarea name="boardMain" id="boardMain" cols="116" rows="30"></textarea>
+		<input type="text" name="searchGeo" id="searchGeo" placeholder="ìƒí˜¸ë¥¼ ê²€ìƒ‰í•˜ì„¸ìš”"><br>
+		<div id="map" style="width:80%;height:240px;"></div>
 	</form>
+	<div id="btns">
+		<button type="button" id="btnList" onclick="location.href='/board/getBoardList.do'">ëª©ë¡</button>
+		<button type="button" id="btnDone" onclick="location.href='/board/insertBoard.do'">ë“±ë¡</button>
+		<button type="button" id="btnCancel" onclick="history.back();">ì·¨ì†Œ</button>
+	</div>
 
 </div>
 <jsp:include page="${pageContext.request.contextPath }/footer.jsp"></jsp:include>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=74dadd665477bb479ae9a0d793b563cd&libraries=services"></script>
 <script>
-	// ¸¶Ä¿¸¦ ´ãÀ» ¹è¿­ÀÔ´Ï´Ù
-	var markers = [];
-	
-	var mapContainer = document.getElementById('map'), // Áöµµ¸¦ Ç¥½ÃÇÒ div 
-	    mapOption = {
-	        center: new kakao.maps.LatLng(37.566826, 126.9786567), // ÁöµµÀÇ Áß½ÉÁÂÇ¥
-	        level: 3 // ÁöµµÀÇ È®´ë ·¹º§
-	    };  
-	
-	// Áöµµ¸¦ »ı¼ºÇÕ´Ï´Ù    
-	var map = new kakao.maps.Map(mapContainer, mapOption); 
-	
-	// Àå¼Ò °Ë»ö °´Ã¼¸¦ »ı¼ºÇÕ´Ï´Ù
-	var ps = new kakao.maps.services.Places();  
-	
-	// °Ë»ö °á°ú ¸ñ·ÏÀÌ³ª ¸¶Ä¿¸¦ Å¬¸¯ÇßÀ» ¶§ Àå¼Ò¸íÀ» Ç¥ÃâÇÒ ÀÎÆ÷À©µµ¿ì¸¦ »ı¼ºÇÕ´Ï´Ù
+	// ë§ˆì»¤ë¥¼ í´ë¦­í•˜ë©´ ì¥ì†Œëª…ì„ í‘œì¶œí•  ì¸í¬ìœˆë„ìš° ì…ë‹ˆë‹¤
 	var infowindow = new kakao.maps.InfoWindow({zIndex:1});
 	
-	// Å°¿öµå·Î Àå¼Ò¸¦ °Ë»öÇÕ´Ï´Ù
-	searchPlaces();
+	var mapContainer = document.getElementById('map'), // ì§€ë„ë¥¼ í‘œì‹œí•  div 
+	    mapOption = {
+	        center: new kakao.maps.LatLng(37.566826, 126.9786567), // ì§€ë„ì˜ ì¤‘ì‹¬ì¢Œí‘œ
+	        level: 3 // ì§€ë„ì˜ í™•ëŒ€ ë ˆë²¨
+	    };  
 	
-	// Å°¿öµå °Ë»öÀ» ¿äÃ»ÇÏ´Â ÇÔ¼öÀÔ´Ï´Ù
-	function searchPlaces() {
+	// ì§€ë„ë¥¼ ìƒì„±í•©ë‹ˆë‹¤    
+	var map = new kakao.maps.Map(mapContainer, mapOption); 
 	
-	    var keyword = document.getElementById('keyword').value;
+	// ì¥ì†Œ ê²€ìƒ‰ ê°ì²´ë¥¼ ìƒì„±í•©ë‹ˆë‹¤
+	var ps = new kakao.maps.services.Places(); 
 	
-	    if (!keyword.replace(/^\s+|\s+$/g, '')) {
-	        alert('Å°¿öµå¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä!');
-	        return false;
-	    }
+	// í‚¤ì›Œë“œë¡œ ì¥ì†Œë¥¼ ê²€ìƒ‰í•©ë‹ˆë‹¤
+	ps.keywordSearch('í•˜ì´ë””ë¼ì˜¤', placesSearchCB); 
 	
-	    // Àå¼Ò°Ë»ö °´Ã¼¸¦ ÅëÇØ Å°¿öµå·Î Àå¼Ò°Ë»öÀ» ¿äÃ»ÇÕ´Ï´Ù
-	    ps.keywordSearch( keyword, placesSearchCB); 
-	}
-	
-	// Àå¼Ò°Ë»öÀÌ ¿Ï·áµÆÀ» ¶§ È£ÃâµÇ´Â Äİ¹éÇÔ¼ö ÀÔ´Ï´Ù
-	function placesSearchCB(data, status, pagination) {
+	// í‚¤ì›Œë“œ ê²€ìƒ‰ ì™„ë£Œ ì‹œ í˜¸ì¶œë˜ëŠ” ì½œë°±í•¨ìˆ˜ ì…ë‹ˆë‹¤
+	function placesSearchCB (data, status, pagination) {
 	    if (status === kakao.maps.services.Status.OK) {
 	
-	        // Á¤»óÀûÀ¸·Î °Ë»öÀÌ ¿Ï·áµÆÀ¸¸é
-	        // °Ë»ö ¸ñ·Ï°ú ¸¶Ä¿¸¦ Ç¥ÃâÇÕ´Ï´Ù
-	        displayPlaces(data);
+	        // ê²€ìƒ‰ëœ ì¥ì†Œ ìœ„ì¹˜ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì§€ë„ ë²”ìœ„ë¥¼ ì¬ì„¤ì •í•˜ê¸°ìœ„í•´
+	        // LatLngBounds ê°ì²´ì— ì¢Œí‘œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤
+	        var bounds = new kakao.maps.LatLngBounds();
 	
-	        // ÆäÀÌÁö ¹øÈ£¸¦ Ç¥ÃâÇÕ´Ï´Ù
-	        displayPagination(pagination);
+	        for (var i=0; i<data.length; i++) {
+	            displayMarker(data[i]);    
+	            bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
+	        }       
 	
-	    } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-	
-	        alert('°Ë»ö °á°ú°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.');
-	        return;
-	
-	    } else if (status === kakao.maps.services.Status.ERROR) {
-	
-	        alert('°Ë»ö °á°ú Áß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù.');
-	        return;
-	
-	    }
+	        // ê²€ìƒ‰ëœ ì¥ì†Œ ìœ„ì¹˜ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì§€ë„ ë²”ìœ„ë¥¼ ì¬ì„¤ì •í•©ë‹ˆë‹¤
+	        map.setBounds(bounds);
+	    } 
 	}
 	
-	// °Ë»ö °á°ú ¸ñ·Ï°ú ¸¶Ä¿¸¦ Ç¥ÃâÇÏ´Â ÇÔ¼öÀÔ´Ï´Ù
-	function displayPlaces(places) {
-	
-	    var listEl = document.getElementById('placesList'), 
-	    menuEl = document.getElementById('menu_wrap'),
-	    fragment = document.createDocumentFragment(), 
-	    bounds = new kakao.maps.LatLngBounds(), 
-	    listStr = '';
+	// ì§€ë„ì— ë§ˆì»¤ë¥¼ í‘œì‹œí•˜ëŠ” í•¨ìˆ˜ì…ë‹ˆë‹¤
+	function displayMarker(place) {
 	    
-	    // °Ë»ö °á°ú ¸ñ·Ï¿¡ Ãß°¡µÈ Ç×¸ñµéÀ» Á¦°ÅÇÕ´Ï´Ù
-	    removeAllChildNods(listEl);
+	    // ë§ˆì»¤ë¥¼ ìƒì„±í•˜ê³  ì§€ë„ì— í‘œì‹œí•©ë‹ˆë‹¤
+	    var marker = new kakao.maps.Marker({
+	        map: map,
+	        position: new kakao.maps.LatLng(place.y, place.x) 
+	    });
 	
-	    // Áöµµ¿¡ Ç¥½ÃµÇ°í ÀÖ´Â ¸¶Ä¿¸¦ Á¦°ÅÇÕ´Ï´Ù
-	    removeMarker();
-	    
-	    for ( var i=0; i<places.length; i++ ) {
-	
-	        // ¸¶Ä¿¸¦ »ı¼ºÇÏ°í Áöµµ¿¡ Ç¥½ÃÇÕ´Ï´Ù
-	        var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
-	            marker = addMarker(placePosition, i), 
-	            itemEl = getListItem(i, places[i]); // °Ë»ö °á°ú Ç×¸ñ Element¸¦ »ı¼ºÇÕ´Ï´Ù
-	
-	        // °Ë»öµÈ Àå¼Ò À§Ä¡¸¦ ±âÁØÀ¸·Î Áöµµ ¹üÀ§¸¦ Àç¼³Á¤ÇÏ±âÀ§ÇØ
-	        // LatLngBounds °´Ã¼¿¡ ÁÂÇ¥¸¦ Ãß°¡ÇÕ´Ï´Ù
-	        bounds.extend(placePosition);
-	
-	        // ¸¶Ä¿¿Í °Ë»ö°á°ú Ç×¸ñ¿¡ mouseover ÇßÀ»¶§
-	        // ÇØ´ç Àå¼Ò¿¡ ÀÎÆ÷À©µµ¿ì¿¡ Àå¼Ò¸íÀ» Ç¥½ÃÇÕ´Ï´Ù
-	        // mouseout ÇßÀ» ¶§´Â ÀÎÆ÷À©µµ¿ì¸¦ ´İ½À´Ï´Ù
-	        (function(marker, title) {
-	            kakao.maps.event.addListener(marker, 'mouseover', function() {
-	                displayInfowindow(marker, title);
-	            });
-	
-	            kakao.maps.event.addListener(marker, 'mouseout', function() {
-	                infowindow.close();
-	            });
-	
-	            itemEl.onmouseover =  function () {
-	                displayInfowindow(marker, title);
-	            };
-	
-	            itemEl.onmouseout =  function () {
-	                infowindow.close();
-	            };
-	        })(marker, places[i].place_name);
-	
-	        fragment.appendChild(itemEl);
-	    }
-	
-	    // °Ë»ö°á°ú Ç×¸ñµéÀ» °Ë»ö°á°ú ¸ñ·Ï Element¿¡ Ãß°¡ÇÕ´Ï´Ù
-	    listEl.appendChild(fragment);
-	    menuEl.scrollTop = 0;
-	
-	    // °Ë»öµÈ Àå¼Ò À§Ä¡¸¦ ±âÁØÀ¸·Î Áöµµ ¹üÀ§¸¦ Àç¼³Á¤ÇÕ´Ï´Ù
-	    map.setBounds(bounds);
-	}
-	
-	// °Ë»ö°á°ú Ç×¸ñÀ» Element·Î ¹İÈ¯ÇÏ´Â ÇÔ¼öÀÔ´Ï´Ù
-	function getListItem(index, places) {
-	
-	    var el = document.createElement('li'),
-	    itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
-	                '<div class="info">' +
-	                '   <h5>' + places.place_name + '</h5>';
-	
-	    if (places.road_address_name) {
-	        itemStr += '    <span>' + places.road_address_name + '</span>' +
-	                    '   <span class="jibun gray">' +  places.address_name  + '</span>';
-	    } else {
-	        itemStr += '    <span>' +  places.address_name  + '</span>'; 
-	    }
-	                 
-	      itemStr += '  <span class="tel">' + places.phone  + '</span>' +
-	                '</div>';           
-	
-	    el.innerHTML = itemStr;
-	    el.className = 'item';
-	
-	    return el;
-	}
-	
-	// ¸¶Ä¿¸¦ »ı¼ºÇÏ°í Áöµµ À§¿¡ ¸¶Ä¿¸¦ Ç¥½ÃÇÏ´Â ÇÔ¼öÀÔ´Ï´Ù
-	function addMarker(position, idx, title) {
-	    var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // ¸¶Ä¿ ÀÌ¹ÌÁö url, ½ºÇÁ¶óÀÌÆ® ÀÌ¹ÌÁö¸¦ ¾¹´Ï´Ù
-	        imageSize = new kakao.maps.Size(36, 37),  // ¸¶Ä¿ ÀÌ¹ÌÁöÀÇ Å©±â
-	        imgOptions =  {
-	            spriteSize : new kakao.maps.Size(36, 691), // ½ºÇÁ¶óÀÌÆ® ÀÌ¹ÌÁöÀÇ Å©±â
-	            spriteOrigin : new kakao.maps.Point(0, (idx*46)+10), // ½ºÇÁ¶óÀÌÆ® ÀÌ¹ÌÁö Áß »ç¿ëÇÒ ¿µ¿ªÀÇ ÁÂ»ó´Ü ÁÂÇ¥
-	            offset: new kakao.maps.Point(13, 37) // ¸¶Ä¿ ÁÂÇ¥¿¡ ÀÏÄ¡½ÃÅ³ ÀÌ¹ÌÁö ³»¿¡¼­ÀÇ ÁÂÇ¥
-	        },
-	        markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
-	            marker = new kakao.maps.Marker({
-	            position: position, // ¸¶Ä¿ÀÇ À§Ä¡
-	            image: markerImage 
-	        });
-	
-	    marker.setMap(map); // Áöµµ À§¿¡ ¸¶Ä¿¸¦ Ç¥ÃâÇÕ´Ï´Ù
-	    markers.push(marker);  // ¹è¿­¿¡ »ı¼ºµÈ ¸¶Ä¿¸¦ Ãß°¡ÇÕ´Ï´Ù
-	
-	    return marker;
-	}
-	
-	// Áöµµ À§¿¡ Ç¥½ÃµÇ°í ÀÖ´Â ¸¶Ä¿¸¦ ¸ğµÎ Á¦°ÅÇÕ´Ï´Ù
-	function removeMarker() {
-	    for ( var i = 0; i < markers.length; i++ ) {
-	        markers[i].setMap(null);
-	    }   
-	    markers = [];
-	}
-	
-	// °Ë»ö°á°ú ¸ñ·Ï ÇÏ´Ü¿¡ ÆäÀÌÁö¹øÈ£¸¦ Ç¥½Ã´Â ÇÔ¼öÀÔ´Ï´Ù
-	function displayPagination(pagination) {
-	    var paginationEl = document.getElementById('pagination'),
-	        fragment = document.createDocumentFragment(),
-	        i; 
-	
-	    // ±âÁ¸¿¡ Ãß°¡µÈ ÆäÀÌÁö¹øÈ£¸¦ »èÁ¦ÇÕ´Ï´Ù
-	    while (paginationEl.hasChildNodes()) {
-	        paginationEl.removeChild (paginationEl.lastChild);
-	    }
-	
-	    for (i=1; i<=pagination.last; i++) {
-	        var el = document.createElement('a');
-	        el.href = "#";
-	        el.innerHTML = i;
-	
-	        if (i===pagination.current) {
-	            el.className = 'on';
-	        } else {
-	            el.onclick = (function(i) {
-	                return function() {
-	                    pagination.gotoPage(i);
-	                }
-	            })(i);
-	        }
-	
-	        fragment.appendChild(el);
-	    }
-	    paginationEl.appendChild(fragment);
-	}
-	
-	// °Ë»ö°á°ú ¸ñ·Ï ¶Ç´Â ¸¶Ä¿¸¦ Å¬¸¯ÇßÀ» ¶§ È£ÃâµÇ´Â ÇÔ¼öÀÔ´Ï´Ù
-	// ÀÎÆ÷À©µµ¿ì¿¡ Àå¼Ò¸íÀ» Ç¥½ÃÇÕ´Ï´Ù
-	function displayInfowindow(marker, title) {
-	    var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
-	
-	    infowindow.setContent(content);
-	    infowindow.open(map, marker);
-	}
-	
-	 // °Ë»ö°á°ú ¸ñ·ÏÀÇ ÀÚ½Ä Element¸¦ Á¦°ÅÇÏ´Â ÇÔ¼öÀÔ´Ï´Ù
-	function removeAllChildNods(el) {   
-	    while (el.hasChildNodes()) {
-	        el.removeChild (el.lastChild);
-	    }
+	    // ë§ˆì»¤ì— í´ë¦­ì´ë²¤íŠ¸ë¥¼ ë“±ë¡í•©ë‹ˆë‹¤
+	    kakao.maps.event.addListener(marker, 'click', function() {
+	        // ë§ˆì»¤ë¥¼ í´ë¦­í•˜ë©´ ì¥ì†Œëª…ì´ ì¸í¬ìœˆë„ìš°ì— í‘œì¶œë©ë‹ˆë‹¤
+	        infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
+	        infowindow.open(map, marker);
+	    });
 	}
 </script>
 </body>

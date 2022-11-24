@@ -59,6 +59,5 @@ public class UserVO {
 		return "UserVO [userId=" + userId + ", userPwd=" + userPwd + ", userNm=" + userNm + ", userEmail=" + userEmail
 				+ ", userRgd=" + userRgd + ", rprtCnt=" + rprtCnt + ", userRole=" + userRole + "]";
 	}
-	
-	
+
 }
