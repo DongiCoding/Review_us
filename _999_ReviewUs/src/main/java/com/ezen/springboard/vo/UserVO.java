@@ -6,6 +6,8 @@ public class UserVO {
 	private String userId;
 	private String userPwd;
 	private String userNm;
+	private String userEmail1;
+	private String userEmail2;
 	private String userEmail;
 	private Date userRgd;
 	private int rprtCnt;
@@ -29,8 +31,20 @@ public class UserVO {
 	public void setUserNm(String userNm) {
 		this.userNm = userNm;
 	}
+	public String getUserEmail1() {
+		return userEmail1;
+	}
+	public void setUserEmail1(String userEmail1) {
+		this.userEmail1 = userEmail1;
+	}
+	public String getUserEmail2() {
+		return userEmail2;
+	}
+	public void setUserEmail2(String userEmail2) {
+		this.userEmail2 = userEmail2;
+	}
 	public String getUserEmail() {
-		return userEmail;
+		return getUserEmail1() + "@" + getUserEmail2();
 	}
 	public void setUserEmail(String userEmail) {
 		this.userEmail = userEmail;

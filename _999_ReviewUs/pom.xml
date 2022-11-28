@@ -77,11 +77,11 @@
 		</dependency>		
 		
 		<!-- https://mvnrepository.com/artifact/org.apache.ibatis/ibatis-core -->
-		<dependency>
+<!-- 		<dependency>
 		    <groupId>org.apache.ibatis</groupId>
 		    <artifactId>ibatis-core</artifactId>
 		    <version>3.0</version>
-		</dependency>
+		</dependency> -->
 		
 		<!-- https://mvnrepository.com/artifact/cglib/cglib -->
 		<!-- 웹에서 AOP 동작하게 해주는 라이브러리 -->
