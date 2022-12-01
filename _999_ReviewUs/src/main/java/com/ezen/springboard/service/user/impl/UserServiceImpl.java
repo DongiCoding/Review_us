@@ -1,5 +1,8 @@
 package com.ezen.springboard.service.user.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,5 +47,13 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void updatePassword(UserVO userVO) {
 		userDAO.updatePassword(userVO);
+	}
+	@Override
+	public List<UserVO> getAduserList(Map<String, String> paramMap) {
+		return userDAO.getAduserList(paramMap);
+	}
+	@Override
+	public void updateUserRole(String userId) {
+		userDAO.updateUserRole(userId);
 	}
 }
