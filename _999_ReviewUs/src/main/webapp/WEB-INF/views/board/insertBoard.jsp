@@ -88,13 +88,14 @@
 <div id="container">
 	<h3>리뷰 쓰기</h3>
 	<form name="insertForm" id="insertForm" action="/board/insertBoard.do" method="post" enctype="multipart/form-data">
+		<input type="hidden" name="boardCatecd" id="boardCatecd">
 		<input type="hidden" name="placeTitle" id="placeTitle">
 		<select name="boardCate" id="boardCate" required>
-			<option value="" disabled selected>CATEGORY</option>
-			<option value="HOTELS">HOTELS</option>
-			<option value="DESSERT">DESSERT</option>
-			<option value="BARS&PUBS">BARS&amp;PUBS</option>
-			<option value="RESTAURANT">RESTAURANT</option>
+			<option value="0" disabled selected>CATEGORY</option>
+			<option value="1">HOTELS</option>
+			<option value="2">DESSERT</option>
+			<option value="3">BARS&amp;PUBS</option>
+			<option value="4">RESTAURANT</option>
 		</select><br>
 		<input type="text" name="boardTitle" id="boardTitle" placeholder="제목"><br>
 		<label for="userId" id="userId">작성자: </label><input type="text" name="userId" value="${loginUser.userId}" readonly><br>
@@ -166,6 +167,26 @@
 			}
 			
 			$("#btnAtt")[0].files = dt.files;
+			
+			const boardCatecd = $("#boardCate").val();
+			switch(boardCatecd) {
+			case 'HOTELS' :
+					$("#boardCatecd").val(1);
+					break;
+			case 'DESSERT' :
+					$("#boardCatecd").val(2);
+					break;
+			case 'BARS&amp;PUBS' :
+					$("#boardCatecd").val(3);
+					break;
+			case 'RESTAUNRANT' :
+					$("#boardCatecd").val(4);
+					break;
+			default :
+					$("#boardCatecd").val(0);
+					break;
+			}
+			
 		});
 		
 	});
