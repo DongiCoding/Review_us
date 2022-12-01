@@ -11,7 +11,7 @@
 			WHERE USER_ID = #{userId}
 	</select>
 		<select id="nmCheck" parameterType="string" resultType="int">
-		SELECT COUNT(USER_ID)
+		SELECT COUNT(USER_NM)
 			FROM USER
 			WHERE USER_NM = #{userNm}
 	</select>

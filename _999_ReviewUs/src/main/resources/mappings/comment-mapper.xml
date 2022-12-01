@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- CREATE TABLE COMMENT (
+	CNO INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    BNO INT NOT NULL,
+    WRITER VARCHAR(30) NOT NULL,
+    CONTENT VARCHAR(300) NOT NULL,
+	REGDATE DATETIME NOT NULL DEFAULT NOW(),
+    CONSTRAINT COMMENT_BOARD_NO_FK
+		FOREIGN KEY (BNO)
+        REFERENCES BOARD (BOARD_NO)
+); -->
+
+<mapper namespace="CommentDAO">
+
+	<!-- 댓글 조회 -->
+	<select id="commentList" parameterType="int" resultType="comment">
+		SELECT
+			CNO, BNO, WRITER, CONTENT, REGDATE
+		FROM COMMENT
+			WHERE BNO = #{bno}
+	</select>
+	
+	<!-- 댓글 작성 -->
+	<insert id="insertComment" parameterType="comment">
+		INSERT INTO COMMENT(BNO, WRITER, CONTENT)
+			VALUES(#{bno}, #{writer}, #{content})
+	</insert>
+	
+	<!-- 댓글 수정 -->
+	<update id="updateComment" parameterType="comment">
+		UPDATE COMMENT
+			SET WRITER = #{writer}, CONTENT = #{content}
+			WHERE CNO = #{cno} AND BNO = #{bno}
+	</update>
+	
+	<!-- 댓글 삭제 -->
+	<delete id="deleteComment">
+		DELETE FROM COMMENT
+			WHERE CNO = #{cno} AND BNO = #{bno}
+	</delete>
+	
+	<!-- 단일 댓글 조회 -->
+	<select id="commentSelect" parameterType="comment" resultType="comment">
+		SELECT
+			CNO, BNO, WRITER, CONTENT, REGDATE
+		FROM COMMENT
+			WHERE BNO = #{bno} AND CNO = #{cno}
+	</select>
+	
+</mapper>
