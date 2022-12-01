@@ -27,7 +27,18 @@
 	</insert>
 	
 	<insert id="insertAdminboard" parameterType="board">
-		INSERT INTO BOARD VALUES(
+		INSERT INTO BOARD(
+			BOARD_NO,
+			BOARD_TITLE,
+			BOARD_MAIN,
+			BOARD_STAR,
+			RPRT_CNT,
+			BOARD_RGD,
+			BOARD_CATECD,
+			BOARD_CATE,
+			USER_ID,
+			BOARD_CNT
+			) VALUES(
 			(SELECT IFNULL(MAX(A.BOARD_NO), 0) + 1 FROM BOARD A),
 			#{boardTitle},
 			#{boardMain},
@@ -37,9 +48,7 @@
 			0,
 			#{boardCate},
 			#{userId},
-			null
-			0,
-			null
+			0
 		)
 	</insert>
 	
@@ -191,5 +200,11 @@
 			WHERE BOARD_NO = #{boardNo}
 			  AND FILE_NO = #{fileNo}
 	</delete>
+	
+	<select id="getAdminboard" parameterType="int" resultType="board">
+	SELECT *
+		FROM BOARD
+		WHERE BOARD_NO = #{boardNo}
+	</select>
 	
 </mapper>

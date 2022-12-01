@@ -6,12 +6,12 @@
 <meta charset="UTF-8">
 <title>리뷰 쓰기</title>
 <style>
-	 #container { width: 800px; margin: 0 auto;}
+	 #container { width: 800px; margin: 0 auto; padding-top: 30px; padding-bottom: 100px;}
 	 #boardCate { width: 15%; height: 28px; margin-bottom: 10px;}
 	 select option[value=""][disabled] {
 	   display: none;
 	 }
-	 #boardTitle { margin-bottom: 10px; width:90%; height: 30px; border-width: 0 0 1px 0; font-size: 18px;}
+	 #boardTitle { margin-bottom: 10px; width:100%; height: 30px; border-width: 0 0 1px 0; font-size: 18px;}
 	 #uploadFile { margin-top:8px;}
 	 #boardStar { margin-bottom: 10px;}
 	 #insertForm>#boardStar {
@@ -36,7 +36,7 @@
 	 #insertForm>#boardStar input[type=radio]:checked ~ label{
 	     text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
 	 }
-	 #content { margin-bottom: 5px;}
+	 #boardMain { margin-bottom: 5px;}
 	 #btns { margin: 10px;}
 	 #btns>button { width: 80px; height: 30px; font-size: 18px;}
 	 #btnList { float: left;}
@@ -166,6 +166,27 @@
 			}
 			
 			$("#btnAtt")[0].files = dt.files;
+
+			// boardCate value값을 boardCatecd로 전달
+			const boardCatecd = $("#boardCate").val();
+			switch(boardCatecd) {
+			case 'HOTELS' :
+					$("#boardCatecd").val(1);
+					break;
+			case 'DESSERT' :
+					$("#boardCatecd").val(2);
+					break;
+			case 'BARS&amp;PUBS' :
+					$("#boardCatecd").val(3);
+					break;
+			case 'RESTAURANT' :
+					$("#boardCatecd").val(4);
+					break;
+			default :
+					$("#boardCatecd").val(0);
+					break;
+			}
+			
 		});
 		
 	});
@@ -551,9 +572,8 @@
 			$("#boardMain").focus();
 			return false;
 		}
-		if (!$("#keyword").val()) {
+		if (!$("#boardAddr").val()) {
 	        alert('지도에 장소를 표시해주세요.');
-	        $("#keyword").focus();
 	        return false;	    	
 	    }
 	
