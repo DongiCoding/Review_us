@@ -8,16 +8,16 @@
 <meta charset="UTF-8">
 <title>게시글 상세 보기</title>
 <style>
-	 #container { width: 800px; margin: 0 auto;}
+	 #container { width: 800px; margin: 0 auto; padding-top: 30px; padding-bottom: 100px;}
 	 #boardCate { width: 15%; height: 28px; margin-bottom: 10px;}
 	 select option[value=""][disabled] {
 	   display: none;
 	 }
-	 #boardTitle { margin-bottom: 10px; width:90%; height: 30px; border-width: 0 0 1px 0; font-size: 18px;}
-	 #userId { }
-	 #boardRegdate { float: right;}
+	 #boardTitle { margin-bottom: 10px; width:100%; height: 30px; border-width: 0 0 1px 0; font-size: 18px;}
+	 #userId input[type=text] { border: none; font-size: 17px;}
+	 #boardRgd { float: right; margin-right: 15px;}
 	 #boardCnt { float: right;}
-	 #content { margin-bottom: 5px;}
+	 #boardMain { margin-bottom: 5px;}
 	 #btns { margin: 10px;}
 	 #btns>button { width: 80px; height: 30px; font-size: 18px;}
 	 #btnList { float: left;}
@@ -30,7 +30,7 @@
 <jsp:include page="${pageContext.request.contextPath }/header.jsp"></jsp:include>
 <div id="container">
 	<h3>게시글 상세</h3>
-	<form name="updateForm" id="updateForm" action="/board/updateAdminboard.do" method="post">
+	<form name="updateAdminForm" id="updateAdminForm" action="/board/updateAdminboard.do" method="post">
 		<input type="hidden" name="boardNo" id="boardNo" value="${board.boardNo }">
 		<select name="boardCate" id="boardCate" required>
 			<option value="NOTICE" disabled selected>NOTICE</option>
@@ -50,5 +50,21 @@
 
 </div>
 <jsp:include page="${pageContext.request.contextPath }/footer.jsp"></jsp:include>
+<script>
+	$(function() {
+		//세션, 리퀘스트 스코프에 담겨진 데이터를 빼오는 방식
+		const loginUserId = '${loginUser.userId}';
+		const userId = '${board.userId}';
+		const loginUserRole = '${loginUser.userRole}';
+		
+		//관리자가 아니면 게시글 수정 못하게 설정
+		if(loginUserRole != 'admin') {
+			$("#btnUpdate").hide();
+			$("#btnDelete").hide();
+			$("#boardTitle").attr("readonly", true);
+			$("#boardMain").attr("readonly", true);
+		}
+	})
+</script>
 </body>
 </html>
