@@ -15,9 +15,9 @@
 	<!-- DB연동 -->
 	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver"></property>
-		<property name="url" value="jdbc:mysql://localhost:3306/studydb?serverTimezone=UTC"></property>
-		<property name="username" value="study"></property>
-		<property name="password" value="!ezen1234"></property>
+		<property name="url" value="jdbc:mysql://14.63.62.56:3306/reviewus_g01?serverTimezone=UTC"></property>
+		<property name="username" value="g01"></property>
+		<property name="password" value="!dong1234"></property>
 		
 		<!-- 커넥션풀 설정 -->
 		<!-- 연결 풀이 최초로 생성될 때 가지고 있을 커넥션의 개수. 기본 값은 0 -->

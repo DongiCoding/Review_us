@@ -1,11 +1,15 @@
 package com.ezen.springboard.controller;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ezen.springboard.service.user.UserService;
@@ -17,29 +21,27 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	//È¸¿ø°¡ÀÔ ÆäÀÌÁö·Î ÀÌµ¿
 	@GetMapping("/join.do")
 	public String joinView() {
 		return"user/join";
 	}
 	
-	//È¸¿ø°¡ÀÔ ÁøÇà
 	@PostMapping(value="/join.do", produces="application/text; charset=UTF8")
 	public String join(UserVO userVO, Model model) {
 		int joinResult = userService.join(userVO);
 		
-		//È¸¿ø°¡ÀÔ ½ÇÆÐ ½Ã
+		//È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 		if(joinResult == 0) {
-			model.addAttribute("joinMsg", "È¸¿ø°¡ÀÔ¿¡ ½ÇÆÐÇÏ¿´½À´Ï´Ù. ´Ù½Ã ÇÑ ¹ø È®ÀÎÇØÁÖ¼¼¿ä.");
+			model.addAttribute("joinMsg", "È¸ï¿½ï¿½ï¿½ï¿½ï¿½Ô¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½Ï´ï¿½. ï¿½Ù½ï¿½ ï¿½ï¿½ ï¿½ï¿½ È®ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
 			return "user/join";
 		}
 		
-		//È¸¿ø°¡ÀÔ ¼º°ø ½Ã
-		model.addAttribute("joinMsg", userVO.getUserNm() + " ¸®ºä¾î´Ô È¯¿µÇÕ´Ï´Ù!");
+		//È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+		model.addAttribute("joinMsg", userVO.getUserNm() + " ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¯ï¿½ï¿½ï¿½Õ´Ï´ï¿½!");
 		return "user/login";
 	}
 	
-	//¾ÆÀÌµð Áßº¹È®ÀÎ
+
 	@PostMapping("/idCheck.do")
 	@ResponseBody
 	public String idCheck(UserVO userVO) {
@@ -53,7 +55,7 @@ public class UserController {
 		return returnStr;
 	}
 	
-	//´Ð³×ÀÓ Áßº¹È®ÀÎ
+
 	@PostMapping("/nmCheck.do")
 	@ResponseBody
 	public String nmCheck(UserVO userVO) {
@@ -66,4 +68,95 @@ public class UserController {
 		
 		return returnStr;
 	}
+
+	//ï¿½Î±ï¿½ï¿½ï¿½ È­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
+	@GetMapping("/login.do")
+	public String loginView() {
+		return "user/login";
+	}
+	
+	//ï¿½Î±ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
+	@PostMapping("/login.do")
+	@ResponseBody
+	//HttpSession: ï¿½ï¿½ï¿½ï¿½ WASï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½Ã¼
+	//			   ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½.
+	public String login(UserVO userVO, HttpSession session) {
+		//1. ï¿½ï¿½ï¿½Ìµï¿½ Ã¼Å©
+		int idCheck = userService.idCheck(userVO.getUserId());
+		
+		if(idCheck < 1) {
+			return "idFail";
+		} else {
+			UserVO loginUser = userService.login(userVO);
+			
+			//2. ï¿½ï¿½Ð¹ï¿½È£ Ã¼Å©
+			if(loginUser == null) {
+				return "pwFail";
+			}
+			
+			//3. ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			//ï¿½ï¿½ï¿½Ç¿ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ ï¿½ï¿½ï¿½ï¿½
+			session.setAttribute("loginUser", loginUser);
+			return "loginSuccess";
+		}
+	}
+	
+	@GetMapping("/logout.do")
+	public String logout(HttpSession session) {
+		session.invalidate();
+		
+		return "redirect:/index.jsp";
+	}
+	// ì•„ì´ë”” ì°¾ê¸° íŽ˜ì´ì§€ ì´ë™
+	@RequestMapping(value="find_id_form")
+	public String findIdView() {
+		return "user/findId";
+	}
+	
+    // ì•„ì´ë”” ì°¾ê¸° ì‹¤í–‰
+	@RequestMapping(value="find_id", method=RequestMethod.POST)
+	public String findIdAction(UserVO userVO, Model model) {
+		UserVO user = userService.findId(userVO);
+		
+		if(user == null) { 
+			model.addAttribute("check", 1);
+		} else { 
+			model.addAttribute("check", 0);
+			model.addAttribute("id", user.getUserId());
+		}
+		
+		return "user/findId";
+	}
+	
+    // ë¹„ë°€ë²ˆí˜¸ ì°¾ê¸° íŽ˜ì´ì§€ë¡œ ì´ë™
+	@RequestMapping(value="find_password_form")
+	public String findPasswordView() {
+		return "user/findPassword";
+	}
+	
+    // ë¹„ë°€ë²ˆí˜¸ ì°¾ê¸° ì‹¤í–‰
+	@RequestMapping(value="find_password", method=RequestMethod.POST)
+	public String findPasswordAction(UserVO userVO, Model model) {
+		UserVO user = userService.findPassword(userVO);
+		
+		if(user == null) { 
+			model.addAttribute("check", 1);
+		} else { 
+			model.addAttribute("check", 0);
+			model.addAttribute("updateid", user.getUserId());
+		}
+		
+		return "user/findPassword";
+	}
+	
+    // ë¹„ë°€ë²ˆí˜¸ ë°”ê¾¸ê¸° ì‹¤í–‰
+	@RequestMapping(value="update_password", method=RequestMethod.POST)
+	public String updatePasswordAction(@RequestParam (value="updateid", defaultValue="", required=false)
+		String id, UserVO userVO) {
+			userVO.setUserId(id);
+			System.out.println(userVO);
+			userService.updatePassword(userVO);
+			return "user/findPasswordConfirm";
+	}
+
 }

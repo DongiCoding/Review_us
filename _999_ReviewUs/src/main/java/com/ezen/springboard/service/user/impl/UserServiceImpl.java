@@ -30,4 +30,19 @@ public class UserServiceImpl implements UserService {
 	public UserVO login(UserVO userVO) {
 		return userDAO.login(userVO);
 	}
+
+	@Override
+	public UserVO findId(UserVO userVO) {
+		return userDAO.findId(userVO);
+	}
+
+	@Override
+	public UserVO findPassword(UserVO userVO) {
+		return userDAO.findPassword(userVO);
+	}
+
+	@Override
+	public void updatePassword(UserVO userVO) {
+		userDAO.updatePassword(userVO);
+	}
 }

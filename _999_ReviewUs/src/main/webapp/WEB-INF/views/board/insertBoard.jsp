@@ -1,57 +1,52 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
-<title>¸®ºä ¾²±â</title>
+<meta charset="UTF-8">
+<title>ë¦¬ë·° ì“°ê¸°</title>
 <style>
 	 #container { width: 800px; margin: 0 auto;}
-	 #category { width: 15%; height: 28px; margin-bottom: 10px;}
+	 #boardCate { width: 15%; height: 28px; margin-bottom: 10px;}
 	 select option[value=""][disabled] {
 	   display: none;
 	 }
-	 #title { margin-bottom: 10px; width:90%; height: 30px; border-width: 0 0 1px 0; font-size: 18px;}
-	 #uploadFile { margin-top:8px; margin-bottom: 3px;}
-	 #star { margin-bottom: 10px;}
-	 #boardForm div{
+	 #boardTitle { margin-bottom: 10px; width:90%; height: 30px; border-width: 0 0 1px 0; font-size: 18px;}
+	 #uploadFile { margin-top:8px;}
+	 #boardStar { margin-bottom: 10px;}
+	 #insertForm>#boardStar {
 	     display: inline-block;
 	     direction: rtl;
 	     border:0;
 	 }
-	 #boardForm input[type=radio]{
+	 #insertForm input[type=radio]{
 	     display: none;
 	 }
-	 #boardForm>div label{
+	 #insertForm>#boardStar label{
 	     font-size: 1.8em;
 	     color: transparent;
 	     text-shadow: 0 0 0 #f0f0f0;
 	 }
-	 #boardForm>div label:hover{
+	 #insertForm>#boardStar label:hover{
 	     text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
 	 }
-	 #boardForm>div label:hover ~ label{
+	 #insertForm>#boardStar label:hover ~ label{
 	     text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
 	 }
-	 #boardForm>div input[type=radio]:checked ~ label{
+	 #insertForm>#boardStar input[type=radio]:checked ~ label{
 	     text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
 	 }
-	 #contents {
-	     width: 100%;
-	     height: 150px;
-	     padding: 10px;
-	     box-sizing: border-box;
-	     border: solid 1.5px #D3D3D3;
-	     border-radius: 5px;
-	     font-size: 16px;
-	     resize: none;
-	 }
-	 #btns { margin: 10px auto; text-align: center;}
+	 #content { margin-bottom: 5px;}
+	 #btns { margin: 10px;}
 	 #btns>button { width: 80px; height: 30px; font-size: 18px;}
-	 
- 	.map_wrap, .map_wrap * {margin:0;padding:0;font-family:'Malgun Gothic',dotum,'µ¸¿ò',sans-serif;font-size:12px;}
+	 #btnList { float: left;}
+     #btnDone { float: right;}
+     #btnCancel { float: right; margin-right: 10px;}
+     #image_preview { margin-bottom: 5px;}
+ 	
+ 	.map_wrap, .map_wrap * {margin:0;padding:0;font-family:'Malgun Gothic',dotum,'ë‹ì›€',sans-serif;font-size:12px;}
 	.map_wrap a, .map_wrap a:hover, .map_wrap a:active{color:#000;text-decoration: none;}
-	.map_wrap {position:relative;width:100%;height:500px;}
+	.map_wrap {position:relative;width:70%;height:300px;}
 	#menu_wrap {position:absolute;top:0;left:0;bottom:0;width:250px;margin:10px 0 30px 10px;padding:5px;overflow-y:auto;background:rgba(255, 255, 255, 0.7);z-index: 1;font-size:12px;border-radius: 10px;}
 	.bg_white {background:#fff;}
 	#menu_wrap hr {display: block; height: 1px;border: 0; border-top: 2px solid #5F5F5F;margin:3px 0;}
@@ -86,130 +81,258 @@
 	#pagination a {display:inline-block;margin-right:10px;}
 	#pagination .on {font-weight: bold; cursor: default;color:#777;}
 </style>
+<script src="${pageContext.request.contextPath }/js/jquery-3.6.1.min.js"></script>
 </head>
 <body>
 <jsp:include page="${pageContext.request.contextPath }/header.jsp"></jsp:include>
 <div id="container">
-	<h3>¸®ºä ¾²±â</h3>
-	<form name="boardForm" id="boardForm" action="/board/insertBoard.do" method="post">
-		<c:choose>
-			<c:when test="${loginUser.userRole eq 'Admin'}">
-				<select name="category" id="category" required>
-					<option value="" disabled selected>CATEGORY</option>
-					<option value="NOTICES" id="notices">NOTICES</option>
-					<option value="HOTELS">HOTELS</option>
-					<option value="DESSERT">DESSERT</option>
-					<option value="BARS&PUBS">BARS&amp;PUBS</option>
-					<option value="RESTAURANT">RESTAURANT</option>
-				</select>
-			</c:when>
-			<c:otherwise>
-				<select name="category" id="category" required>
-					<option value="" disabled selected>CATEGORY</option>
-					<option value="HOTELS">HOTELS</option>
-					<option value="DESSERT">DESSERT</option>
-					<option value="BARS&PUBS">BARS&amp;PUBS</option>
-					<option value="RESTAURANT">RESTAURANT</option>
-				</select>
-			</c:otherwise>
-		</c:choose><br>
-		<input type="text" name="title" id="title" placeholder="Á¦¸ñ"><br>
-		<label for="userId" id="boardWriter">ÀÛ¼ºÀÚ: </label><input type="text" name="boardWriter" value="${loginUser.userId}" readonly>
-		<input type="file" name="uploadFile" id="uploadFile"><br>
-		<div id="star">
-			<span class="text-bold">º°Á¡À» ¼±ÅÃÇØÁÖ¼¼¿ä</span>
-			<input type="radio" name="reviewStar" value="5" id="rate1"><label for="rate1">¡Ú</label>
-			<input type="radio" name="reviewStar" value="4" id="rate2"><label for="rate2">¡Ú</label>
-			<input type="radio" name="reviewStar" value="3" id="rate3"><label for="rate3">¡Ú</label>
-			<input type="radio" name="reviewStar" value="2" id="rate4"><label for="rate4">¡Ú</label>
-			<input type="radio" name="reviewStar" value="1" id="rate5"><label for="rate5">¡Ú</label>
+	<h3>ë¦¬ë·° ì“°ê¸°</h3>
+	<form name="insertForm" id="insertForm" action="/board/insertBoard.do" method="post" enctype="multipart/form-data">
+		<input type="hidden" name="placeTitle" id="placeTitle">
+		<select name="boardCate" id="boardCate" required>
+			<option value="" disabled selected>CATEGORY</option>
+			<option value="HOTELS">HOTELS</option>
+			<option value="DESSERT">DESSERT</option>
+			<option value="BARS&PUBS">BARS&amp;PUBS</option>
+			<option value="RESTAURANT">RESTAURANT</option>
+		</select><br>
+		<input type="text" name="boardTitle" id="boardTitle" placeholder="ì œëª©"><br>
+		<label for="userId" id="userId">ì‘ì„±ì: </label><input type="text" name="userId" value="${loginUser.userId}" readonly><br>
+		<div id="boardStar">
+			<span class="text-bold">ë³„ì ì„ ì„ íƒí•´ì£¼ì„¸ìš”</span>
+			<input type="radio" name="boardStar" value="5" id="rate5"><label for="rate5">â˜…</label>
+			<input type="radio" name="boardStar" value="4" id="rate4"><label for="rate4">â˜…</label>
+			<input type="radio" name="boardStar" value="3" id="rate3"><label for="rate3">â˜…</label>
+			<input type="radio" name="boardStar" value="2" id="rate2"><label for="rate2">â˜…</label>
+			<input type="radio" name="boardStar" value="1" id="rate1"><label for="rate1">â˜…</label>
 		</div>
-		<textarea name="content" id="content" cols="116" rows="30"></textarea>
+		<textarea name="boardMain" id="boardMain" cols="116" rows="30"></textarea>
+		<div id="image_preview">
+			<input type="file" name="uploadFiles" id="btnAtt" multiple="multiple">
+			<div id="attZone" data-placeholder="íŒŒì¼ì„ íƒ ë²„íŠ¼ì„ ëˆŒëŸ¬ íŒŒì¼ì„ ì²¨ë¶€í•˜ì„¸ìš”."></div>
+		</div>
 		<div class="map_wrap">
-			<div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
-			
-			<div id="menu_wrap" class="bg_white">
-				<div class="option">
-					<div>
-						<input type="button" id="searchBtn" onclick="searchPlaces()" value="°Ë»ö">
-					</div>
-				</div>
-				<hr>
-				<ul id="placesList"></ul>
-				<div id="pagination"></div>
-			</div>
+		    <div id="map" style="width:100%; height:100%; position:relative; overflow:hidden;"></div>
+		
+		    <div id="menu_wrap" class="bg_white">
+		        <div class="option">
+		            <div>
+		                <div>
+		                	<input type="hidden" name="boardAddr" id="boardAddr" value="">
+		                    ìƒí˜¸ëª… : <input type="text" id="keyword" size="15"> 
+		                    <button type="button" onclick="searchPlaces(); return false;">ê²€ìƒ‰í•˜ê¸°</button> 
+		                </div>
+		            </div>
+		        </div>
+		        <hr>
+		        <ul id="placesList"></ul>
+		        <div id="pagination"></div>
+		    </div>
 		</div>
 		<div id="btns">
-			<button type="reset" id="btnCancel">Ãë¼Ò</button>
-			<button type="submit" id="btnDone">µî·Ï</button>
-			<button id="btnList">¸ñ·Ï</button>
+			<button type="button" id="btnList" onclick="location.href='/board/getBoardList.do'">ëª©ë¡</button>
+			<button type="submit" id="btnDone">ë“±ë¡</button>
+			<button type="button" id="btnCancel" onclick="history.back();">ì·¨ì†Œ</button>
 		</div>
 	</form>
-
 </div>
 <jsp:include page="${pageContext.request.contextPath }/footer.jsp"></jsp:include>
+<script>
+	// ì¶”ê°€ëœ íŒŒì¼ë“¤ì„ ë‹´ì•„ì¤„ ë°°ì—´. File ê°ì²´ë¡œ í•˜ë‚˜ì”© ë‹´ìŒ
+	let uploadFiles = [];
+	
+	$(function() {
+		// input type="file"ì´ ë³€ê²½ë˜ë©´ ë¯¸ë¦¬ë³´ê¸° ë™ì‘
+		$("#btnAtt").on("change", function(e) {
+			// input type="file"ì— ì¶”ê°€ëœ íŒŒì¼ë“¤ì„ ë³€ìˆ˜ë¡œ ë°›ì•„ì˜´
+			const files = e.target.files;
+			// ë³€ìˆ˜ë¡œ ë°›ì•„ì˜¨ íŒŒì¼ë“¤ì„ ë°°ì—´ í˜•íƒœë¡œ ë³€í™˜
+			const fileArr = Array.prototype.slice.call(files);
+			
+			// ë°°ì—´ì— ìˆëŠ” íŒŒì¼ë“¤ì„ í•˜ë‚˜ì”© êº¼ë‚´ì„œ ì²˜ë¦¬
+			for(f of fileArr) {
+				imageLoader(f);
+			}
+	
+		});
+		
+		$("#insertForm").on("submit", function() {
+			// ë§ˆì§€ë§‰ìœ¼ë¡œ btnAttì— uploadFilesì— ìˆëŠ” íŒŒì¼ë“¤ì„ ë‹´ì•„ì¤€ë‹¤.
+			dt = new DataTransfer();
+			
+			for(f in uploadFiles) {
+				const file = uploadFiles[f];
+				dt.items.add(file);
+			}
+			
+			$("#btnAtt")[0].files = dt.files;
+		});
+		
+	});
+	
+	// ë¯¸ë¦¬ë³´ê¸° ì˜ì—­ì— ë“¤ì–´ê°ˆ imgíƒœê·¸ ìƒì„± ë° ì„ íƒëœ íŒŒì¼ì„ Base64 ì¸ì½”ë”©ëœ ë¬¸ìì—´ í˜•íƒœë¡œ ë¯¸ë¦¬ë³´ê¸° ê°€ëŠ¥í•˜ê²Œ í•´ì¤Œ
+	function imageLoader(file) {
+		uploadFiles.push(file);
+		
+		const reader = new FileReader();
+		
+		reader.onload = function(e) {
+			// ì´ë¯¸ì§€ë¥¼ í‘œì¶œí•´ ì¤„ imgíƒœí¬ ì„ ì–¸
+			let img = document.createElement("img");
+			img.setAttribute("style", "width: 100%; height: 100%; z-index: none;");
+			
+			// ì´ë¯¸ì§€ íŒŒì¼ì¸ì§€ ì•„ë‹Œì§€ ì²´í¬
+			if(file.name.toLowerCase().match(/(.*?)\.(jpg|jpeg|png|gif|svg|bmp)$/)) {
+				// ì´ë¯¸ì§€ íŒŒì¼ ë¯¸ë¦¬ë³´ê¸° ì²˜ë¦¬
+				img.src = e.target.result;				
+			} else {
+				// ì¼ë°˜ íŒŒì¼ ë¯¸ë¦¬ë³´ê¸° ì²˜ë¦¬
+				img.src = "/images/defaultFileImg.png";
+			}
+			
+			// ë¯¸ë¦¬ë³´ê¸° ì˜ì—­ì— ì¶”ê°€
+			// ë¯¸ë¦¬ë³´ê¸° ì´ë¯¸ì§€ íƒœê·¸ì™€ ì‚­ì œ ë²„íŠ¼, íŒŒì¼ëª…ì„ í‘œì¶œí•˜ëŠ” píƒœê·¸ë¥¼ ë¬¶ì–´ì£¼ëŠ” divë¥¼ ë§Œë“¤ì–´ ë¯¸ë¦¬ë³´ê¸° ì˜ì—­ì— ì¶”ê°€
+			$("#attZone").append(makeDiv(img, file));
+		};
+		
+		// íŒŒì¼ì„ Base64 ì¸ì½”ë”©ëœ ë¬¸ìì—´ë¡œ ë³€ê²½
+		reader.readAsDataURL(file);
+	};
+	
+	// ë¯¸ë¦¬ë³´ê¸° ì˜ì—­ì— ë“¤ì–´ê°ˆ div(img + button + p)ë¥¼ ìƒì„±í•˜ê³  ë¦¬í„´
+	function makeDiv(img, file) {
+		// div ìƒì„±
+		let div = document.createElement("div");
+		div.setAttribute("style", "display: inline-block; position: relative;"
+		 + " width: 150px; height: 120px; margin: 5px; border: 1px solid #848484; z-index: 1;");
+		
+		// button ìƒì„±
+		let btn = document.createElement("input");
+		btn.setAttribute("type", "button");
+		btn.setAttribute("value", "x");
+		btn.setAttribute("delFile", file.name);
+		btn.setAttribute("style", "width: 30px; height: 30px; position: absolute;"
+		+ " right: 0px; bottom: 0px; z-index: 999; background-color: rgba(255, 255, 255, 0.1);"
+		+ " color: #f00;");
+		
+		// ë²„íŠ¼ í´ë¦­ ì´ë²¤íŠ¸
+		// ë²„íŠ¼ í´ë¦­ ì‹œ í•´ë‹¹ íŒŒì¼ì´ ì‚­ì œë˜ë„ë¡ ì„¤ì •
+		btn.onclick = function(e) {
+			// í´ë¦­ëœ ë²„íŠ¼
+			const ele = e.srcElement;
+			// delFile(íŒŒì¼ì´ë¦„) ì†ì„± êº¼ë‚´ì˜¤ê¸°: ì‚­ì œë  íŒŒì¼ëª…
+			const delFile = ele.getAttribute("delFile");
+			
+			for(let i = 0; i < uploadFiles.length; i++) {
+				// ë°°ì—´ì— ë‹´ì•„ë†“ì€ íŒŒì¼ë“¤ ì¤‘ì— í•´ë‹¹ íŒŒì¼ ì‚­ì œ
+				if(delFile == uploadFiles[i].name) {
+					// ë°°ì—´ì—ì„œ ië²ˆì§¸ í•œ ê°œë§Œ ì œê±°
+					uploadFiles.splice(i, 1);
+				}
+			}
+			
+			// ë²„íŠ¼ í´ë¦­ ì‹œ btnAttì— ì²¨ë¶€ëœ íŒŒì¼ë„ ì‚­ì œ
+			// input type=fileì€ ì²¨ë¶€ëœ íŒŒì¼ë“¤ì„ fileList í˜•íƒœë¡œ ê´€ë¦¬
+			// fileListì— ì¼ë°˜ì ì¸ Fileê°ì²´ë¥¼ ë„£ì„ ìˆ˜ ì—†ê³ 
+			// DataTransferë¼ëŠ” í´ë˜ìŠ¤ë¥¼ ì´ìš©í•˜ì—¬ ì™„ì „í•œ fileList í˜•íƒœë¡œ ë§Œë“¤ì–´ì„œ
+			// input.filesì— ë„£ì–´ì¤˜ì•¼ ëœë‹¤.
+			dt = new DataTransfer();
+			
+			for(f in uploadFiles) {
+				const file = uploadFiles[f];
+				dt.items.add(file);
+			}
+			
+			console.log($("#btnAtt"));
+			$("#btnAtt")[0].files = dt.files;
+			
+			// í•´ë‹¹ imgë¥¼ ë‹´ê³ ìˆëŠ” ë¶€ëª¨íƒœê·¸ì¸ div ì‚­ì œ
+			const parentDiv = ele.parentNode;
+			$(parentDiv).remove();
+		}
+		
+		// íŒŒì¼ëª… í‘œì¶œí•  píƒœê·¸ ìƒì„±
+		const fName = document.createElement("p");
+		fName.setAttribute("style", "display: inline-block; font-size: 8px;");
+		fName.textContent = file.name;
+		
+		// divì— í•˜ë‚˜ì”© ì¶”ê°€
+		div.appendChild(img);
+		div.appendChild(btn);
+		div.appendChild(fName);
+		
+		// ì™„ì„±ëœ div ë¦¬í„´
+		return div;
+	}
+</script>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=74dadd665477bb479ae9a0d793b563cd&libraries=services"></script>
 <script>
-	// ¸¶Ä¿¸¦ ´ãÀ» ¹è¿­ÀÔ´Ï´Ù
+	//í˜„ì¬ ìœ„ì¹˜ ì¢Œí‘œ
+	let latitude;
+	let longitude;
+	
+	getUserLocation();
+	
+	// ë§ˆì»¤ë¥¼ ë‹´ì„ ë°°ì—´ì…ë‹ˆë‹¤
 	var markers = [];
 	
-	var mapContainer = document.getElementById('map'), // Áöµµ¸¦ Ç¥½ÃÇÒ div 
+	var mapContainer = document.getElementById('map'), // ì§€ë„ë¥¼ í‘œì‹œí•  div 
 	    mapOption = {
-	        center: new kakao.maps.LatLng(37.566826, 126.9786567), // ÁöµµÀÇ Áß½ÉÁÂÇ¥
-	        level: 3 // ÁöµµÀÇ È®´ë ·¹º§
+	        center: new kakao.maps.LatLng(37.566826, 126.9786567), // ì§€ë„ì˜ ì¤‘ì‹¬ì¢Œí‘œ
+	        level: 3 // ì§€ë„ì˜ í™•ëŒ€ ë ˆë²¨
 	    };  
 	
-	// Áöµµ¸¦ »ı¼ºÇÕ´Ï´Ù    
+	// ì§€ë„ë¥¼ ìƒì„±í•©ë‹ˆë‹¤    
 	var map = new kakao.maps.Map(mapContainer, mapOption); 
 	
-	// Àå¼Ò °Ë»ö °´Ã¼¸¦ »ı¼ºÇÕ´Ï´Ù
+	// ì¥ì†Œ ê²€ìƒ‰ ê°ì²´ë¥¼ ìƒì„±í•©ë‹ˆë‹¤
 	var ps = new kakao.maps.services.Places();  
 	
-	// °Ë»ö °á°ú ¸ñ·ÏÀÌ³ª ¸¶Ä¿¸¦ Å¬¸¯ÇßÀ» ¶§ Àå¼Ò¸íÀ» Ç¥ÃâÇÒ ÀÎÆ÷À©µµ¿ì¸¦ »ı¼ºÇÕ´Ï´Ù
+	// ê²€ìƒ‰ ê²°ê³¼ ëª©ë¡ì´ë‚˜ ë§ˆì»¤ë¥¼ í´ë¦­í–ˆì„ ë•Œ ì¥ì†Œëª…ì„ í‘œì¶œí•  ì¸í¬ìœˆë„ìš°ë¥¼ ìƒì„±í•©ë‹ˆë‹¤
 	var infowindow = new kakao.maps.InfoWindow({zIndex:1});
 	
-	// Å°¿öµå·Î Àå¼Ò¸¦ °Ë»öÇÕ´Ï´Ù
+	// í‚¤ì›Œë“œë¡œ ì¥ì†Œë¥¼ ê²€ìƒ‰í•©ë‹ˆë‹¤
 	searchPlaces();
 	
-	// Å°¿öµå °Ë»öÀ» ¿äÃ»ÇÏ´Â ÇÔ¼öÀÔ´Ï´Ù
+	// í‚¤ì›Œë“œ ê²€ìƒ‰ì„ ìš”ì²­í•˜ëŠ” í•¨ìˆ˜ì…ë‹ˆë‹¤
 	function searchPlaces() {
 	
 	    var keyword = document.getElementById('keyword').value;
 	
-	    if (!keyword.replace(/^\s+|\s+$/g, '')) {
-	        alert('Å°¿öµå¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä!');
+	    /* if (!keyword.replace(/^\s+|\s+$/g, '')) {
+	        alert('ìƒí˜¸ëª…ì„ ì…ë ¥í•´ì£¼ì„¸ìš”!');
 	        return false;
-	    }
+	    } */
 	
-	    // Àå¼Ò°Ë»ö °´Ã¼¸¦ ÅëÇØ Å°¿öµå·Î Àå¼Ò°Ë»öÀ» ¿äÃ»ÇÕ´Ï´Ù
+	    // ì¥ì†Œê²€ìƒ‰ ê°ì²´ë¥¼ í†µí•´ í‚¤ì›Œë“œë¡œ ì¥ì†Œê²€ìƒ‰ì„ ìš”ì²­í•©ë‹ˆë‹¤
 	    ps.keywordSearch( keyword, placesSearchCB); 
 	}
 	
-	// Àå¼Ò°Ë»öÀÌ ¿Ï·áµÆÀ» ¶§ È£ÃâµÇ´Â Äİ¹éÇÔ¼ö ÀÔ´Ï´Ù
+	// ì¥ì†Œê²€ìƒ‰ì´ ì™„ë£Œëì„ ë•Œ í˜¸ì¶œë˜ëŠ” ì½œë°±í•¨ìˆ˜ ì…ë‹ˆë‹¤
 	function placesSearchCB(data, status, pagination) {
 	    if (status === kakao.maps.services.Status.OK) {
 	
-	        // Á¤»óÀûÀ¸·Î °Ë»öÀÌ ¿Ï·áµÆÀ¸¸é
-	        // °Ë»ö ¸ñ·Ï°ú ¸¶Ä¿¸¦ Ç¥ÃâÇÕ´Ï´Ù
+	        // ì •ìƒì ìœ¼ë¡œ ê²€ìƒ‰ì´ ì™„ë£Œëìœ¼ë©´
+	        // ê²€ìƒ‰ ëª©ë¡ê³¼ ë§ˆì»¤ë¥¼ í‘œì¶œí•©ë‹ˆë‹¤
 	        displayPlaces(data);
 	
-	        // ÆäÀÌÁö ¹øÈ£¸¦ Ç¥ÃâÇÕ´Ï´Ù
+	        // í˜ì´ì§€ ë²ˆí˜¸ë¥¼ í‘œì¶œí•©ë‹ˆë‹¤
 	        displayPagination(pagination);
 	
 	    } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
 	
-	        alert('°Ë»ö °á°ú°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.');
+	        alert('ê²€ìƒ‰ ê²°ê³¼ê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.');
 	        return;
 	
 	    } else if (status === kakao.maps.services.Status.ERROR) {
 	
-	        alert('°Ë»ö °á°ú Áß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù.');
+	        alert('ê²€ìƒ‰ ê²°ê³¼ ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤.');
 	        return;
 	
 	    }
 	}
 	
-	// °Ë»ö °á°ú ¸ñ·Ï°ú ¸¶Ä¿¸¦ Ç¥ÃâÇÏ´Â ÇÔ¼öÀÔ´Ï´Ù
+	// ê²€ìƒ‰ ê²°ê³¼ ëª©ë¡ê³¼ ë§ˆì»¤ë¥¼ í‘œì¶œí•˜ëŠ” í•¨ìˆ˜ì…ë‹ˆë‹¤
 	function displayPlaces(places) {
 	
 	    var listEl = document.getElementById('placesList'), 
@@ -218,26 +341,26 @@
 	    bounds = new kakao.maps.LatLngBounds(), 
 	    listStr = '';
 	    
-	    // °Ë»ö °á°ú ¸ñ·Ï¿¡ Ãß°¡µÈ Ç×¸ñµéÀ» Á¦°ÅÇÕ´Ï´Ù
+	    // ê²€ìƒ‰ ê²°ê³¼ ëª©ë¡ì— ì¶”ê°€ëœ í•­ëª©ë“¤ì„ ì œê±°í•©ë‹ˆë‹¤
 	    removeAllChildNods(listEl);
 	
-	    // Áöµµ¿¡ Ç¥½ÃµÇ°í ÀÖ´Â ¸¶Ä¿¸¦ Á¦°ÅÇÕ´Ï´Ù
+	    // ì§€ë„ì— í‘œì‹œë˜ê³  ìˆëŠ” ë§ˆì»¤ë¥¼ ì œê±°í•©ë‹ˆë‹¤
 	    removeMarker();
 	    
 	    for ( var i=0; i<places.length; i++ ) {
 	
-	        // ¸¶Ä¿¸¦ »ı¼ºÇÏ°í Áöµµ¿¡ Ç¥½ÃÇÕ´Ï´Ù
+	        // ë§ˆì»¤ë¥¼ ìƒì„±í•˜ê³  ì§€ë„ì— í‘œì‹œí•©ë‹ˆë‹¤
 	        var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
 	            marker = addMarker(placePosition, i), 
-	            itemEl = getListItem(i, places[i]); // °Ë»ö °á°ú Ç×¸ñ Element¸¦ »ı¼ºÇÕ´Ï´Ù
+	            itemEl = getListItem(i, places[i]); // ê²€ìƒ‰ ê²°ê³¼ í•­ëª© Elementë¥¼ ìƒì„±í•©ë‹ˆë‹¤
 	
-	        // °Ë»öµÈ Àå¼Ò À§Ä¡¸¦ ±âÁØÀ¸·Î Áöµµ ¹üÀ§¸¦ Àç¼³Á¤ÇÏ±âÀ§ÇØ
-	        // LatLngBounds °´Ã¼¿¡ ÁÂÇ¥¸¦ Ãß°¡ÇÕ´Ï´Ù
+	        // ê²€ìƒ‰ëœ ì¥ì†Œ ìœ„ì¹˜ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì§€ë„ ë²”ìœ„ë¥¼ ì¬ì„¤ì •í•˜ê¸°ìœ„í•´
+	        // LatLngBounds ê°ì²´ì— ì¢Œí‘œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤
 	        bounds.extend(placePosition);
 	
-	        // ¸¶Ä¿¿Í °Ë»ö°á°ú Ç×¸ñ¿¡ mouseover ÇßÀ»¶§
-	        // ÇØ´ç Àå¼Ò¿¡ ÀÎÆ÷À©µµ¿ì¿¡ Àå¼Ò¸íÀ» Ç¥½ÃÇÕ´Ï´Ù
-	        // mouseout ÇßÀ» ¶§´Â ÀÎÆ÷À©µµ¿ì¸¦ ´İ½À´Ï´Ù
+	        // ë§ˆì»¤ì™€ ê²€ìƒ‰ê²°ê³¼ í•­ëª©ì— mouseover í–ˆì„ë•Œ
+	        // í•´ë‹¹ ì¥ì†Œì— ì¸í¬ìœˆë„ìš°ì— ì¥ì†Œëª…ì„ í‘œì‹œí•©ë‹ˆë‹¤
+	        // mouseout í–ˆì„ ë•ŒëŠ” ì¸í¬ìœˆë„ìš°ë¥¼ ë‹«ìŠµë‹ˆë‹¤
 	        (function(marker, title) {
 	            kakao.maps.event.addListener(marker, 'mouseover', function() {
 	                displayInfowindow(marker, title);
@@ -246,6 +369,30 @@
 	            kakao.maps.event.addListener(marker, 'mouseout', function() {
 	                infowindow.close();
 	            });
+	            
+	            // ë§ˆì»¤ë¥¼ í´ë¦­í–ˆì„ ë•Œ ì¢Œí‘œ êµ¬í•˜ê¸° 
+	        	kakao.maps.event.addListener(marker, 'click', function (){
+	        		var position = this.getPosition();
+	        	    //console.log(position);
+	        	    $("#placeTitle").val(title);
+	        	    kakao.maps.event.addListener(marker, 'mouseout', function() {
+	                	displayInfowindow(marker, title);
+	            	});
+	        	    
+	        	    // ì¢Œí‘œë¥¼ ì£¼ì†Œë¡œ ë³€í™˜
+	        	    var geocoder = new kakao.maps.services.Geocoder();
+
+	        	    var coord = position;
+	        	    var callback = function(result, status) {
+	        	        if (status === kakao.maps.services.Status.OK) {
+	        	        	
+	        	            console.log(result[0].road_address.address_name);
+	        	            $("#boardAddr").attr("value", result[0].road_address.address_name);
+	        	        }
+	        	    };
+
+	        	    geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+	        	});
 	
 	            itemEl.onmouseover =  function () {
 	                displayInfowindow(marker, title);
@@ -258,16 +405,18 @@
 	
 	        fragment.appendChild(itemEl);
 	    }
+	    
 	
-	    // °Ë»ö°á°ú Ç×¸ñµéÀ» °Ë»ö°á°ú ¸ñ·Ï Element¿¡ Ãß°¡ÇÕ´Ï´Ù
+	    // ê²€ìƒ‰ê²°ê³¼ í•­ëª©ë“¤ì„ ê²€ìƒ‰ê²°ê³¼ ëª©ë¡ Elementì— ì¶”ê°€í•©ë‹ˆë‹¤
 	    listEl.appendChild(fragment);
 	    menuEl.scrollTop = 0;
 	
-	    // °Ë»öµÈ Àå¼Ò À§Ä¡¸¦ ±âÁØÀ¸·Î Áöµµ ¹üÀ§¸¦ Àç¼³Á¤ÇÕ´Ï´Ù
+	    // ê²€ìƒ‰ëœ ì¥ì†Œ ìœ„ì¹˜ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì§€ë„ ë²”ìœ„ë¥¼ ì¬ì„¤ì •í•©ë‹ˆë‹¤
 	    map.setBounds(bounds);
+	    //map.setCenter(new kakao.maps.LatLng(latitude, longitude));
 	}
 	
-	// °Ë»ö°á°ú Ç×¸ñÀ» Element·Î ¹İÈ¯ÇÏ´Â ÇÔ¼öÀÔ´Ï´Ù
+	// ê²€ìƒ‰ê²°ê³¼ í•­ëª©ì„ Elementë¡œ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜ì…ë‹ˆë‹¤
 	function getListItem(index, places) {
 	
 	    var el = document.createElement('li'),
@@ -291,28 +440,43 @@
 	    return el;
 	}
 	
-	// ¸¶Ä¿¸¦ »ı¼ºÇÏ°í Áöµµ À§¿¡ ¸¶Ä¿¸¦ Ç¥½ÃÇÏ´Â ÇÔ¼öÀÔ´Ï´Ù
+	function success({ coords, timestamp }) {
+        latitude = coords.latitude;   // ìœ„ë„
+        longitude = coords.longitude; // ê²½ë„
+        
+        //alert(`ìœ„ë„: ${latitude}, ê²½ë„: ${longitude}, ìœ„ì¹˜ ë°˜í™˜ ì‹œê°„: ${timestamp}`);
+        //location.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
+    }
+
+    function getUserLocation() {
+        if (!navigator.geolocation) {
+            throw "ìœ„ì¹˜ ì •ë³´ê°€ ì§€ì›ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤.";
+        }
+        navigator.geolocation.getCurrentPosition(success);
+    }
+	
+	// ë§ˆì»¤ë¥¼ ìƒì„±í•˜ê³  ì§€ë„ ìœ„ì— ë§ˆì»¤ë¥¼ í‘œì‹œí•˜ëŠ” í•¨ìˆ˜ì…ë‹ˆë‹¤
 	function addMarker(position, idx, title) {
-	    var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // ¸¶Ä¿ ÀÌ¹ÌÁö url, ½ºÇÁ¶óÀÌÆ® ÀÌ¹ÌÁö¸¦ ¾¹´Ï´Ù
-	        imageSize = new kakao.maps.Size(36, 37),  // ¸¶Ä¿ ÀÌ¹ÌÁöÀÇ Å©±â
+	    var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // ë§ˆì»¤ ì´ë¯¸ì§€ url, ìŠ¤í”„ë¼ì´íŠ¸ ì´ë¯¸ì§€ë¥¼ ì”ë‹ˆë‹¤
+	        imageSize = new kakao.maps.Size(36, 37),  // ë§ˆì»¤ ì´ë¯¸ì§€ì˜ í¬ê¸°
 	        imgOptions =  {
-	            spriteSize : new kakao.maps.Size(36, 691), // ½ºÇÁ¶óÀÌÆ® ÀÌ¹ÌÁöÀÇ Å©±â
-	            spriteOrigin : new kakao.maps.Point(0, (idx*46)+10), // ½ºÇÁ¶óÀÌÆ® ÀÌ¹ÌÁö Áß »ç¿ëÇÒ ¿µ¿ªÀÇ ÁÂ»ó´Ü ÁÂÇ¥
-	            offset: new kakao.maps.Point(13, 37) // ¸¶Ä¿ ÁÂÇ¥¿¡ ÀÏÄ¡½ÃÅ³ ÀÌ¹ÌÁö ³»¿¡¼­ÀÇ ÁÂÇ¥
+	            spriteSize : new kakao.maps.Size(36, 691), // ìŠ¤í”„ë¼ì´íŠ¸ ì´ë¯¸ì§€ì˜ í¬ê¸°
+	            spriteOrigin : new kakao.maps.Point(0, (idx*46)+10), // ìŠ¤í”„ë¼ì´íŠ¸ ì´ë¯¸ì§€ ì¤‘ ì‚¬ìš©í•  ì˜ì—­ì˜ ì¢Œìƒë‹¨ ì¢Œí‘œ
+	            offset: new kakao.maps.Point(13, 37) // ë§ˆì»¤ ì¢Œí‘œì— ì¼ì¹˜ì‹œí‚¬ ì´ë¯¸ì§€ ë‚´ì—ì„œì˜ ì¢Œí‘œ
 	        },
 	        markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
 	            marker = new kakao.maps.Marker({
-	            position: position, // ¸¶Ä¿ÀÇ À§Ä¡
+	            position: position, // ë§ˆì»¤ì˜ ìœ„ì¹˜
 	            image: markerImage 
 	        });
 	
-	    marker.setMap(map); // Áöµµ À§¿¡ ¸¶Ä¿¸¦ Ç¥ÃâÇÕ´Ï´Ù
-	    markers.push(marker);  // ¹è¿­¿¡ »ı¼ºµÈ ¸¶Ä¿¸¦ Ãß°¡ÇÕ´Ï´Ù
+	    marker.setMap(map); // ì§€ë„ ìœ„ì— ë§ˆì»¤ë¥¼ í‘œì¶œí•©ë‹ˆë‹¤
+	    markers.push(marker);  // ë°°ì—´ì— ìƒì„±ëœ ë§ˆì»¤ë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤
 	
 	    return marker;
 	}
 	
-	// Áöµµ À§¿¡ Ç¥½ÃµÇ°í ÀÖ´Â ¸¶Ä¿¸¦ ¸ğµÎ Á¦°ÅÇÕ´Ï´Ù
+	// ì§€ë„ ìœ„ì— í‘œì‹œë˜ê³  ìˆëŠ” ë§ˆì»¤ë¥¼ ëª¨ë‘ ì œê±°í•©ë‹ˆë‹¤
 	function removeMarker() {
 	    for ( var i = 0; i < markers.length; i++ ) {
 	        markers[i].setMap(null);
@@ -320,13 +484,13 @@
 	    markers = [];
 	}
 	
-	// °Ë»ö°á°ú ¸ñ·Ï ÇÏ´Ü¿¡ ÆäÀÌÁö¹øÈ£¸¦ Ç¥½Ã´Â ÇÔ¼öÀÔ´Ï´Ù
+	// ê²€ìƒ‰ê²°ê³¼ ëª©ë¡ í•˜ë‹¨ì— í˜ì´ì§€ë²ˆí˜¸ë¥¼ í‘œì‹œëŠ” í•¨ìˆ˜ì…ë‹ˆë‹¤
 	function displayPagination(pagination) {
 	    var paginationEl = document.getElementById('pagination'),
 	        fragment = document.createDocumentFragment(),
 	        i; 
 	
-	    // ±âÁ¸¿¡ Ãß°¡µÈ ÆäÀÌÁö¹øÈ£¸¦ »èÁ¦ÇÕ´Ï´Ù
+	    // ê¸°ì¡´ì— ì¶”ê°€ëœ í˜ì´ì§€ë²ˆí˜¸ë¥¼ ì‚­ì œí•©ë‹ˆë‹¤
 	    while (paginationEl.hasChildNodes()) {
 	        paginationEl.removeChild (paginationEl.lastChild);
 	    }
@@ -351,8 +515,8 @@
 	    paginationEl.appendChild(fragment);
 	}
 	
-	// °Ë»ö°á°ú ¸ñ·Ï ¶Ç´Â ¸¶Ä¿¸¦ Å¬¸¯ÇßÀ» ¶§ È£ÃâµÇ´Â ÇÔ¼öÀÔ´Ï´Ù
-	// ÀÎÆ÷À©µµ¿ì¿¡ Àå¼Ò¸íÀ» Ç¥½ÃÇÕ´Ï´Ù
+	// ê²€ìƒ‰ê²°ê³¼ ëª©ë¡ ë˜ëŠ” ë§ˆì»¤ë¥¼ í´ë¦­í–ˆì„ ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜ì…ë‹ˆë‹¤
+	// ì¸í¬ìœˆë„ìš°ì— ì¥ì†Œëª…ì„ í‘œì‹œí•©ë‹ˆë‹¤
 	function displayInfowindow(marker, title) {
 	    var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
 	
@@ -360,12 +524,40 @@
 	    infowindow.open(map, marker);
 	}
 	
-	 // °Ë»ö°á°ú ¸ñ·ÏÀÇ ÀÚ½Ä Element¸¦ Á¦°ÅÇÏ´Â ÇÔ¼öÀÔ´Ï´Ù
+	 // ê²€ìƒ‰ê²°ê³¼ ëª©ë¡ì˜ ìì‹ Elementë¥¼ ì œê±°í•˜ëŠ” í•¨ìˆ˜ì…ë‹ˆë‹¤
 	function removeAllChildNods(el) {   
 	    while (el.hasChildNodes()) {
 	        el.removeChild (el.lastChild);
 	    }
 	}
+</script>
+<script>
+	$("#btnDone").click(function() {
+		if(!$("#boardCate").val()) {
+			alert("ì¹´í…Œê³ ë¦¬ë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”.");
+			return false;
+		}
+		if(!$("#boardTitle").val()) {
+			alert("ì œëª©ì„ ì…ë ¥í•´ì£¼ì„¸ìš”.");
+			$("#boardTitle").focus();
+			return false;
+		}
+		if($("input:radio[name=boardStar]:checked").length < 1) {
+			alert("ë³„ì ì„ ì„ íƒí•´ì£¼ì„¸ìš”.");
+			return false;
+		}
+		if(!$("#boardMain").val()) {
+			alert("ë‚´ìš©ì„ ì…ë ¥í•´ì£¼ì„¸ìš”.");
+			$("#boardMain").focus();
+			return false;
+		}
+		if (!$("#keyword").val()) {
+	        alert('ì§€ë„ì— ì¥ì†Œë¥¼ í‘œì‹œí•´ì£¼ì„¸ìš”.');
+	        $("#keyword").focus();
+	        return false;	    	
+	    }
+	
+	})
 </script>
 </body>
 </html>

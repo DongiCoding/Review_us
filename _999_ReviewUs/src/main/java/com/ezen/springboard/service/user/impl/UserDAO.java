@@ -26,4 +26,19 @@ public class UserDAO {
 	public UserVO login(UserVO userVO) {
 		return mybatis.selectOne("UserDAO.login", userVO);
 	}
+	
+	public UserVO findId(UserVO userVO) {
+		System.out.println("Mybatis로 findId() 기능 처리");
+		return mybatis.selectOne("UserDAO.findId", userVO);
+	}
+
+	public UserVO findPassword(UserVO userVO) {
+		System.out.println("Mybatis로 findPassword() 기능 처리");
+		return mybatis.selectOne("UserDAO.findPassword", userVO);
+	}
+
+	public void updatePassword(UserVO userVO) {
+		System.out.println("Mybatis로 updatePassword() 기능 처리");
+		mybatis.update("UserDAO.updatePassword", userVO);
+	}
 }

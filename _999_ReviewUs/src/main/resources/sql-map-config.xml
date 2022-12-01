@@ -13,10 +13,15 @@
 	<typeAliases>
 		<typeAlias type="com.ezen.springboard.vo.BoardVO" alias="board"></typeAlias>
 		<typeAlias type="com.ezen.springboard.vo.UserVO" alias="user"></typeAlias>
+		<typeAlias type="com.ezen.springboard.vo.BoardFileVO" alias="boardFile"></typeAlias>
+		<typeAlias type="com.ezen.springboard.common.CamelHashMap" alias="camelHashMap"></typeAlias>
+		<typeAlias type="com.ezen.springboard.vo.CommentVO" alias="comment"></typeAlias>
 	</typeAliases>
 	
 	<!-- 사용할 SQL 매퍼 위치 지정 -->
 	<mappers>
-		<mapper resource="mappings/*-mapper.xml"></mapper>
+		<mapper resource="mappings/board-mapper.xml"></mapper>
+		<mapper resource="mappings/user-mapper.xml"></mapper>
+		<mapper resource="mappings/comment-mapper.xml"></mapper>
 	</mappers>
 </configuration>
