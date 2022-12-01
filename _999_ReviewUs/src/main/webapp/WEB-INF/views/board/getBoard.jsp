@@ -8,13 +8,14 @@
 <meta charset="UTF-8">
 <title>게시글 상세 보기</title>
 <style>
-	 #container { width: 800px; margin: 0 auto;}
+	 #container { width: 800px; margin: 0 auto; padding-top: 30px; padding-bottom: 100px;}
 	 #boardCate { width: 15%; height: 28px; margin-bottom: 10px;}
 	 select option[value=""][disabled] {
 	   display: none;
 	 }
-	 #boardTitle { margin-bottom: 10px; width:90%; height: 30px; border-width: 0 0 1px 0; font-size: 18px;}
-	 #boardRegdate { float: right;}
+	 #boardTitle { margin-bottom: 10px; width:100%; height: 30px; border-width: 0 0 1px 0; font-size: 18px;}
+	 #userId input[type=text] { border: none; font-size: 17px;}
+	 #boardRgd { float: right; margin-right: 15px;}
 	 #boardCnt { float: right;}
 	 #uploadFile { margin-top:8px;}
 	 #boardStar { clear:both; margin-bottom: 10px;}
@@ -40,7 +41,7 @@
 	 #updateForm>#boardStar input[type=radio]:checked ~ label{
 	     text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
 	 }
-	 #content { margin-bottom: 5px;}
+	 #boardMain { margin-bottom: 5px;}
 	 #btns { margin: 10px;}
 	 #btns>button { width: 80px; height: 30px; font-size: 18px;}
 	 #btnList { float: left;}
@@ -58,27 +59,10 @@
 		<input type="hidden" name="boardNo" id="boardNo" value="${board.boardNo }">
 		<input type="hidden" name="originFiles" id="originFiles">
 		<select name="boardCate" id="boardCate" required>
-			<!-- <option value="" disabled selected>CATEGORY</option> -->
-			<option value="HOTELS"
-				<c:if test="${boardCate eq 'HOTELS' }">
-					selected="selected"
-				</c:if>
-			>HOTELS</option>
-			<option value="DESSERT"
-				<c:if test="${boardCate eq 'DESSERT' }">
-					selected="selected"
-				</c:if>
-			>DESSERT</option>
-			<option value="BARS&PUBS"
-				<c:if test="${boardCate eq 'BARS&PUBS' }">
-					selected="selected"
-				</c:if>
-			>BARS&amp;PUBS</option>
-			<option value="RESTAURANT"
-				<c:if test="${boardCate eq 'RESTAURANT' }">
-					selected="selected"
-				</c:if>
-			>RESTAURANT</option>
+			<option value="HOTELS" id="hotels">HOTELS</option>
+			<option value="DESSERT" id="dessert">DESSERT</option>
+			<option value="BARS&PUBS" id="barsnpubs">BARS&amp;PUBS</option>
+			<option value="RESTAURANT" id="restaurant">RESTAURANT</option>
 		</select><br>
 		<input type="text" name="boardTitle" id="boardTitle" value="${board.boardTitle }"><br>
 		<label id="userId">작성자: <input type="text" name="userId" value="${board.userId }" readonly></label>
@@ -134,65 +118,14 @@
 			</div>
 		</div>
 		<div id="map" style="width:70%;height:300px;"></div>
-	</form>
-	<div id="btns">
-		<button type="button" id="btnList" onclick="location.href='/board/getBoardList.do'">목록</button>
-		<button type="submit" id="btnUpdate">수정</button>
-		<button type="button" id="btnDelete" onclick="location.href='/board/deleteBoard.do?boardNo=${board.boardNo}'">삭제</button>
-	</div>
-
-</div>
-<hr>
-<!-- 댓글 시작 -->
-<table>
-<!-- 	<li>
-		<div>
-			<p>첫 번째 댓글 작성자</p>
-			<p>첫 번째 댓글</p>
+		<div id="btns">
+			<button type="button" id="btnList" onclick="location.href='/board/getBoardList.do'">목록</button>
+			<button type="submit" id="btnUpdate">수정</button>
+			<button type="button" id="btnDelete" onclick="location.href='/board/deleteBoard.do?boardNo=${board.boardNo}'">삭제</button>
 		</div>
-	</li>
-	<li>
-		<div>
-			<p>두 번째 댓글 작성자</p>
-			<p>두 번째 댓글</p>
-		</div>	
-	</li>
-	<li>
-		<div>
-			<p>세 번째 댓글 작성자</p>
-			<p>세 번째 댓글</p>
-		</div>	
-	</li> -->
-	<c:forEach items="${comment }" var="comment">
-		<tr>
-			<td>${comment.writer }</td>
-			<td>${comment.content }</td>
-			<td><fmt:formatDate value="${comment.regdate }" pattern="yyyy.MM.dd"/></td>
-		</tr>
-	</c:forEach>
-</table>
-<br>
-<a href="/comment/commentSelect.do?bno=${board.boardNo }&cno=${comment.cno}">수정</a>
-&emsp;&emsp; 
-<a href="/comment/deleteComment.do?bno=${board.boardNo }&cno=${comment.cno}">삭제</a>
-
-<br><br>
-
-<div>
-	<form action="/comment.insertComment.do" method="post">
-		<p>
-			<label>댓글 작성자</label><input type="text" name="writer">
-		</p>
-		<p>
-			<textarea rows="5" cols="50" name="content"></textarea>
-		</p>
-		<p>
-			<input type="hidden" name="bno" value="${comment.bno }">
-			<button type="submit">댓글 등록</button>
-		</p>
 	</form>
+
 </div>
-<!-- 댓글 끝 -->
 <jsp:include page="${pageContext.request.contextPath }/footer.jsp"></jsp:include>
 <script>
 	
@@ -212,20 +145,34 @@
 			}
 		}
 		
-		const boardCate = '${board.boardCate}';
+	 	const boardCate = '${board.boardCate}';
 		
-		if(boardCate == $(""))
+		if(boardCate == $("#hotels").val()) {
+			$("#hotels").attr("selected", "selected");
+		} else if(boardCate == $("#dessert").val()) {
+			$("#dessert").attr("selected", "selected");
+		} else if(boardCate == $("#barsnpubs").val()) {
+			$("#barsnpubs").attr("selected", "selected");
+		} else if(boardCate == $("#restaurant").val()) {
+			$("#restaurant").attr("selected", "selected");
+		} 
 		
 		//세션, 리퀘스트 스코프에 담겨진 데이터를 빼오는 방식
 		const loginUserId = '${loginUser.userId}';
 		const userId = '${board.userId}';
+		const loginUserRole = '${loginUser.userRole}';
 		
 		//게시글 작성자와 로그인 유저가 다르면 게시글 수정 못하게 설정
-		if(loginUserId !== userId) {
+		if(loginUserId !== userId && loginUserRole != 'admin') {
 			$("#btnUpdate").hide();
 			$("#btnDelete").hide();
 			$("#boardTitle").attr("readonly", true);
 			$("#boardMain").attr("readonly", true);
+			$("#boardCate").attr("disabled", true);
+			$("#boardStar").attr("onclick", "return(false)");
+			$("#boardStar>span").hide();
+			$("#image_preview>#btnAtt").hide();
+			$("#image_preview>p").hide();
 		}
 		// input type="file"이 변경되면 미리보기 동작
 		$("#btnAtt").on("change", function(e) {
@@ -477,6 +424,25 @@
 	        map.setCenter(coords);
 	    } 
 	});    
+</script>
+<script>
+	$("#btnUpdate").click(function() {
+		if(!$("#boardTitle").val()) {
+			alert("제목을 입력해주세요.");
+			$("#boardTitle").focus();
+			return false;
+		}
+		if($("input:radio[name=boardStar]:checked").length < 1) {
+			alert("별점을 선택해주세요.");
+			return false;
+		}
+		if(!$("#boardMain").val()) {
+			alert("내용을 입력해주세요.");
+			$("#boardMain").focus();
+			return false;
+		}
+	})
+	
 </script>
 </body>
 </html>
