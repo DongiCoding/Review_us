@@ -166,11 +166,7 @@ public class BoardController {
 		return "redirect:/board/getAdminboard.do?boardNo=" + boardVO.getBoardNo();
 	}
 	
-	// 게시판으로 이동
-	@GetMapping("/getBoardList.do")
-	public String getBoardListView() {
-		return "board/getBoardList";
-	}
+
 	
 	// 게시판에서 홈(index)으로 이동
 	@GetMapping("/index.do")
@@ -192,6 +188,10 @@ public class BoardController {
 		if (paramMap.get("searchKeyword") != null && !paramMap.get("searchKeyword").equals("")) {
 			model.addAttribute("searchKeyword", paramMap.get("searchKeyword"));
 		}
+		if (paramMap.get("boardCatecd") != null && !paramMap.get("boardCatecd").equals("")) {
+			model.addAttribute("boardCatecd", paramMap.get("boardCatecd"));
+		}
+		
 		
 		// 검색했을때, 검색한 조건만 가져와야 하기 떄문에
 		int total = boardService.getBoardTotalCnt(paramMap);

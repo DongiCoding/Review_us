@@ -112,6 +112,9 @@
 					OR BOARD_TITLE LIKE CONCAT('%', #{boardSearch.searchKeyword}, '%')
 					OR BOARD_MAIN LIKE CONCAT('%', #{boardSearch.searchKeyword}, '%')
 					OR USER_ID LIKE CONCAT('%', #{boardSearch.searchKeyword}, '%')
+					<if test="boardSearch.boardCatecd != null or boardSearch.boardCatecd != '' or boardSearch.boardCatecd != 0">
+						AND BOARD_CATECD = #{boardSearch.boardCatecd}
+					</if>
 				</if>
 				<if test="boardSearch.searchCondition != 'all'">
 				WHERE 1 = 1
@@ -124,6 +127,15 @@
 					<if test="boardSearch.searchCondition == 'id'">
 						AND USER_ID LIKE CONTCAT('%', #{boardSearch.searchKeyword}, '%')
 					</if>
+					<if test="boardSearch.boardCatecd != null or boardSearch.boardCatecd != '' or boardSearch.boardCatecd != 0">
+						AND BOARD_CATECD = #{boardSearch.boardCatecd}
+					</if>
+				</if>
+			</if>
+			<if test="boardSearch.searchKeyword == null or boardSearch.searchKeyword == ''">
+			WHERE 1 = 1
+				<if test="boardSearch.boardCatecd != null and boardSearch.boardCatecd != '' and boardSearch.boardCatecd != 0">
+					AND BOARD_CATECD = #{boardSearch.boardCatecd}
 				</if>
 			</if>
 			<!-- Limit 개수,  OFFSET 시작번호 -->
