@@ -45,4 +45,33 @@
 			  AND USER_PWD = #{userPwd}
 	]]>
 	</select>
+	<update id="updateUserRole" parameterType="string">
+		UPDATE USER
+		SET USER_ROLE = 'Stopped'
+		WHERE USER_ID = #{userId }
+	</update>
+	<select id="getAduserlist" parameterType="map" resultType="user">
+	<![CDATA[
+		SELECT *
+			FROM USER
+			ORDER BY USER_ROLE
+	]]>
+			<if test="userSearch.searchKeyword != null and userSearch.searchKeyword != ''">
+				<if test="userSearch.searchCondition == 'all'">
+				WHERE 1 = 0
+				   OR USER_NM LIKE CONCAT('%', #{userSearch.searchKeyword}, '%')
+				   OR USER_ID LIKE CONCAT('%', #{userSearch.searchKeyword}, '%')
+				</if>
+				<if test="userSearch.searchCondition != 'all'">
+				WHERE 1 = 1
+					<if test="userSearch.searchCondition == 'userId'">
+						AND USER_ID LIKE CONCAT('%', #{boardSearch.searchKeyword}, '%')
+					</if>
+					<if test="userSearch.searchCondition == 'nickname'">
+						AND USER_NM LIKE CONCAT('%', #{boardSearch.searchKeyword}, '%')
+					</if>
+				</if>
+			</if>
+	</select>
+	
 </mapper>

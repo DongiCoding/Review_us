@@ -18,42 +18,42 @@ public class BoardDAO {
 	@Autowired
 	private SqlSessionTemplate mybatis;
 	
-	// 게시글 등록
+	// 寃뚯떆湲� �벑濡�
 	public void insertBoard(BoardVO boardVO, List<BoardFileVO> fileList) {
 		mybatis.insert("BoardDAO.insertBoard", boardVO);
 		
 		if(fileList.size() > 0) {
-			// 게시글 번호를 담아주는 작업
+			// 寃뚯떆湲� 踰덊샇瑜� �떞�븘二쇰뒗 �옉�뾽
 			for(BoardFileVO boardFile : fileList) {
 				boardFile.setBoardNo(boardVO.getBoardNo());
 				
-				// List를 매퍼로 보내는 방식 1: 하나씩 꺼내서 매퍼의 쿼리 호출
+				// List瑜� 留ㅽ띁濡� 蹂대궡�뒗 諛⑹떇 1: �븯�굹�뵫 爰쇰궡�꽌 留ㅽ띁�쓽 荑쇰━ �샇異�
 				mybatis.insert("BoardDAO.insertBoardFile", boardFile);
 			}
 		}
 	}
 	
-	// 공지글 등록
+	// 怨듭�湲� �벑濡�
 	public void insertAdminboard(BoardVO boardVO) {
 		mybatis.insert("BoardDAO.insertAdminboard", boardVO);
 	}
 	
-	// 게시글 삭제
+	// 寃뚯떆湲� �궘�젣
 	public void deleteBoard(int boardNo) {
 		mybatis.delete("BoardDAO.deleteBoard", boardNo);
 	}
 	
-	// 공지글 삭제
+	// 怨듭�湲� �궘�젣
 	public void deleteAdminboard(int boardNo) {
 		mybatis.delete("BoardDAO.deleteAdminboard", boardNo);
 	}
 	
-	// 공지글 수정
+	// 怨듭�湲� �닔�젙
 	public void updateAdminboard(BoardVO boardVO) {
 		mybatis.update("BoardDAO.updateAdminboard", boardVO);
 	}
 	
-	// 게시글 목록 조회
+	// 寃뚯떆湲� 紐⑸줉 議고쉶
 	public List<BoardVO> getBoardList(@RequestParam Map<String, String> paramMap, Criteria cri) {
 		Map<String, Object> pMap = new HashMap<String, Object>();
 		
@@ -66,13 +66,13 @@ public class BoardDAO {
 		return mybatis.selectList("BoardDAO.getBoardList", pMap);
 	}
 	
-	// 게시글의 총 개수
-	// 검색했을 때 게시글의 총 개수
+	// 寃뚯떆湲��쓽 珥� 媛쒖닔
+	// 寃��깋�뻽�쓣 �븣 寃뚯떆湲��쓽 珥� 媛쒖닔
 	public int getBoardTotalCnt(Map<String, String> paramMap) {
 		return mybatis.selectOne("BoardDAO.getBoardTotalCnt", paramMap);
 	}
 	
-	// 게시글 상세 조회
+	// 寃뚯떆湲� �긽�꽭 議고쉶
 	public BoardVO getBoard(int boardNo) {
 		Map<String, Object> testMap = mybatis.selectOne("BoardDAO.getBoardMap", boardNo);
 		System.out.println(testMap.toString());
@@ -80,17 +80,17 @@ public class BoardDAO {
 		return mybatis.selectOne("BoardDAO.getBoard", boardNo);
 	}
 	
-	// 조회수 증가
+	// 議고쉶�닔 利앷�
 	public void updateBoardCnt(int boardNo) {
 		mybatis.update("BoardDAO.updateBoardCnt", boardNo);
 	}
 	
-	// 첨부파일 리스트 조회
+	// 泥⑤��뙆�씪 由ъ뒪�듃 議고쉶
 	public List<BoardFileVO> getBoardFileList(int boardNo) {
 		return mybatis.selectList("BoardDAO.getBoardFileList", boardNo);
 	}
 	
-	// 게시글 수정
+	// 寃뚯떆湲� �닔�젙
 	public void updateBoard(BoardVO boardVO, List<BoardFileVO> uFileList) {
 		mybatis.update("BoardDAO.updateBoard", boardVO);
 		
@@ -105,5 +105,17 @@ public class BoardDAO {
 				}
 			}
 		}
+	}
+	//관리자용
+	public List<BoardVO> getAdboardList(@RequestParam Map<String, String> paramMap) {
+		Map<String, Object> adboardList = new HashMap<String, Object>();
+			
+		adboardList.put("boardSearch", paramMap);
+				
+		return mybatis.selectList("BoardDAO.getAdBoardList", adboardList);
+	}
+	// 공지글 상세 조회
+	public BoardVO getAdminboard(int boardNo) {
+		return mybatis.selectOne("BoardDAO.getAdminboard", boardNo);
 	}
 }

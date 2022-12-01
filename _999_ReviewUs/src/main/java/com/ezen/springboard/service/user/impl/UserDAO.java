@@ -1,9 +1,15 @@
 package com.ezen.springboard.service.user.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.ezen.springboard.vo.Criteria;
 import com.ezen.springboard.vo.UserVO;
 
 @Repository
@@ -28,17 +34,28 @@ public class UserDAO {
 	}
 	
 	public UserVO findId(UserVO userVO) {
-		System.out.println("Mybatis로 findId() 기능 처리");
+		System.out.println("Mybatis濡� findId() 湲곕뒫 泥섎━");
 		return mybatis.selectOne("UserDAO.findId", userVO);
 	}
 
 	public UserVO findPassword(UserVO userVO) {
-		System.out.println("Mybatis로 findPassword() 기능 처리");
+		System.out.println("Mybatis濡� findPassword() 湲곕뒫 泥섎━");
 		return mybatis.selectOne("UserDAO.findPassword", userVO);
 	}
 
 	public void updatePassword(UserVO userVO) {
-		System.out.println("Mybatis로 updatePassword() 기능 처리");
+		System.out.println("Mybatis濡� updatePassword() 湲곕뒫 泥섎━");
 		mybatis.update("UserDAO.updatePassword", userVO);
 	}
+	public List<UserVO> getAduserList(@RequestParam Map<String, String> paramMap) {
+		Map<String, Object> adUserList = new HashMap<String, Object>();
+		
+		adUserList.put("userSearch", paramMap);
+			
+		return mybatis.selectList("UserDAO.getAduserlist", adUserList);
+	}
+	public void updateUserRole(String userId) {
+		mybatis.update("UserDAO.updateUserRole", userId);
+	}
+	
 }
