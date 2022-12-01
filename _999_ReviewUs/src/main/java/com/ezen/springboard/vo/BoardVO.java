@@ -13,6 +13,8 @@ public class BoardVO {
 	private String boardCate;
 	private String userId;
 	private String boardAddr;
+	private String boardCnt;
+	private String placeTitle;
 	
 	public int getBoardNo() {
 		return boardNo;
@@ -75,11 +77,25 @@ public class BoardVO {
 		this.boardAddr = boardAddr;
 	}
 	
+	public String getBoardCnt() {
+		return boardCnt;
+	}
+	public void setBoardCnt(String boardCnt) {
+		this.boardCnt = boardCnt;
+	}
+	public String getPlaceTitle() {
+		return placeTitle;
+	}
+	public void setPlaceTitle(String placeTitle) {
+		this.placeTitle = placeTitle;
+	}
+	
 	@Override
 	public String toString() {
 		return "BoardVO [boardNo=" + boardNo + ", boardTitle=" + boardTitle + ", boardMain=" + boardMain
 				+ ", boardStar=" + boardStar + ", rprtCnt=" + rprtCnt + ", boardRgd=" + boardRgd + ", boardCatecd="
-				+ boardCatecd + ", boardCate=" + boardCate + ", userId=" + userId + ", boardAddr=" + boardAddr + "]";
+				+ boardCatecd + ", boardCate=" + boardCate + ", userId=" + userId + ", boardAddr=" + boardAddr
+				+ ", boardCnt=" + boardCnt + ", placeTitle=" + placeTitle + "]";
 	}
 	
 }

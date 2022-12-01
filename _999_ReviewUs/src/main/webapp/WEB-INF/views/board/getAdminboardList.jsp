@@ -16,13 +16,13 @@
 
 /* nav */
 #nav {
-   text-align:right;
+   margin-top: 20px;
+   margin-left: 575px;
    color: black;
 }
 
-#nav_ul li {
+ul li {
    list-style: none;
-   display:inline-block;
 }
 
 #nav a {
@@ -44,7 +44,6 @@ header {
 #T_img {
    width: 530px;
    height: 100px;
-   margin-left:-60px;
 }
 
 /* body */
@@ -59,13 +58,13 @@ header {
 }
 
 .ml {
-   width: 90%;
-   height: 70px;
+   width: 93%;
+   height: 122px;
    padding: 10px;
-   font-size: 1.4em;
+   font-size: 1.5em;
    font-weight: bold;
    border: 1px solid black;
-   line-height: 90px;
+   line-height: 150px;
    text-align: center;
 }
 
@@ -85,7 +84,7 @@ header {
 #main_r {
    width: 60%;
    float: right;
-   margin-right:50px;
+   margin-left: 5px;
 }
 
 #tr td { text-align:center; }
@@ -98,14 +97,10 @@ header {
    margin-left: 180px;
 }
 
-
-/* 페이지 번호 */
-#numPage { width:100%; }
-
 .pagination {
    list-style: none;
-   width: 70%; 
-   margin-left:220px;  
+   width: 70%;
+   display: inline-block;
 }
 
 .pagination a { color:black; text-decoration:none;}
@@ -133,8 +128,7 @@ header {
                   </li> 
                </c:when>
                <c:otherwise>
-                  <li><a href="/user/logout.do">&ensp;로그아웃</a></li>&emsp;
-                  <li><a href="/board/insertBoard.do">게시글 등록</a></li>
+                  <li><a href="/board/getBoardList.do">&ensp;로그아웃</a></li>
                </c:otherwise>
             </c:choose>
          </ul>
@@ -150,20 +144,21 @@ header {
          <!-- main_left -->
          <div id="main_left">
             <div class="ml">
-               <a href="/board/getBoardList.do?boardCatecd=0">All
+               <a href="#">All
                </a>
             </div>
             <div class="ml">
-               <a href="/board/getBoardList.do?boardCatecd=1">HOTELS</a>
+               <a href="#">BARS
+                  & PUBS </a>
             </div>
             <div class="ml">
-               <a href="/board/getBoardList.do?boardCatecd=2">DESSERT & PLACES</a>
+               <a href="#">DESSERT & PLACES</a>
             </div>
             <div class="ml">
-               <a href="/board/getBoardList.do?boardCatecd=3">BARS & PUBS</a>
+               <a href="#">RESTAURANTS</a>
             </div>
             <div class="ml">
-               <a href="/board/getBoardList.do?boardCatecd=4">RESTAURANTS</a>
+               <a href="#">HOTELS</a>
             </div>
          </div>
 
@@ -171,11 +166,8 @@ header {
          <div id="main_r"
             style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <form id="searchForm" action="/board/getBoardList.do" method="post">
-            <input type="hidden" id="pageNum" name="pageNum" value="${pageVO.cri.pageNum }">
-            <input type="hidden" id="amount" name="amount" value="${pageVO.cri.amount }">
-            <input type="hidden" id="boardCatecd" name="boardCatecd">
                <!-- 페이지 번호:hidden 이유 -->
-               <table border="1" style="width: 650px; border-collapse: collapse;">
+               <table border="1" style="width: 700px; border-collapse: collapse;">
                   <tr>
                      <td align="right"><select name="searchCondition">
                            <option value="all"
@@ -202,7 +194,7 @@ header {
             </form>
 
             <table class="mr" id="boardTable" border="1"
-               style="width: 650px; border-collapse: collapse;">
+               style="width: 700px; border-collapse: collapse;">
                <tr>
                   <th style="background: skyblue; width: 10%;">번호</th>
                   <th style="background: skyblue; width: 45%;">제목</th>
@@ -226,8 +218,7 @@ header {
                </c:forEach>
             </table>
             <br />
-            <!-- class="mr" -->
-            <div style="text-align: center;" id="numPage" >
+            <div style="text-align: center;" class="mr">
                <ul class="pagination">
                   <c:if test="${pageVO.prev }">
                      <li class="pagination_button"><a
@@ -243,7 +234,8 @@ header {
                      <li class="pagination_button"><a href="${pageVO.cri.pageNum + 1 }">다음</a></li>
                   </c:if>
                </ul>
-            </div>  
+            </div>
+            <br /> <a href="/board/insertBoard.do">새 글 등록</a>
          </div>
          <div id="footer">
             <jsp:include page="${pageContext.request.contextPath }/footer.jsp"></jsp:include>

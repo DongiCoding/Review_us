@@ -74,14 +74,7 @@
 		    <groupId>org.mybatis</groupId>
 		    <artifactId>mybatis-spring</artifactId>
 		    <version>2.0.7</version>
-		</dependency>		
-		
-		<!-- https://mvnrepository.com/artifact/org.apache.ibatis/ibatis-core -->
-<!-- 		<dependency>
-		    <groupId>org.apache.ibatis</groupId>
-		    <artifactId>ibatis-core</artifactId>
-		    <version>3.0</version>
-		</dependency> -->
+		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/cglib/cglib -->
 		<!-- 웹에서 AOP 동작하게 해주는 라이브러리 -->
@@ -96,7 +89,27 @@
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-pool2</artifactId>
 		    <version>2.11.1</version>
-		</dependency>			
+		</dependency>	
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.13.3</version>
+		</dependency>				
+		
+		<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+		<dependency>
+		    <groupId>commons-fileupload</groupId>
+		    <artifactId>commons-fileupload</artifactId>
+		    <version>1.4</version>
+		</dependency>		
+		
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<dependency>
+		    <groupId>commons-io</groupId>
+		    <artifactId>commons-io</artifactId>
+		    <version>2.11.0</version>
+		</dependency>		
 		
 		<!-- Logging -->
 		<dependency>

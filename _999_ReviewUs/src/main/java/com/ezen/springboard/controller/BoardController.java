@@ -1,6 +1,7 @@
 package com.ezen.springboard.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,20 +10,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ezen.springboard.common.FileUtils;
 import com.ezen.springboard.service.board.BoardService;
 import com.ezen.springboard.vo.BoardFileVO;
 import com.ezen.springboard.vo.BoardVO;
 import com.ezen.springboard.vo.Criteria;
 import com.ezen.springboard.vo.PageVO;
 import com.ezen.springboard.vo.UserVO;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/board")
@@ -60,12 +70,12 @@ public class BoardController {
 	// 게시글 등록
 	@PostMapping("/insertBoard.do")
 	public String insertBoard(BoardVO boardVO, MultipartFile[] uploadFiles, 
-			HttpServletRequest request) {
-		int boardNo = boardService.insertBoard(boardVO);
+			HttpServletRequest request) throws IOException {
 		
+		List<BoardFileVO> fileList = new ArrayList<BoardFileVO>();
+		System.out.println(uploadFiles.length);
 		// 파일업로드 기능 구현
 		if(uploadFiles.length > 0) {
-			List<BoardFileVO> fileList = new ArrayList<BoardFileVO>();
 			
 			// 업로드 폴더 지정
 			// request.getSession().getServletContext().getRealPath("/"): WAS의 루트패스
@@ -79,12 +89,30 @@ public class BoardController {
 			if(!directory.exists()) {
 				directory.mkdir();
 			}
+			
+			// multipartFile 배열에서 파일들을 꺼내 DB 형식에 맞게 변경한다.
+			for(int i = 0; i < uploadFiles.length; i++) {
+				MultipartFile file = uploadFiles[i];
+				System.out.println(file.getOriginalFilename());
+				// getOriginalFileName(): 업로드한 파일의 파일명 
+				if(!file.getOriginalFilename().equals("") &&
+					file.getOriginalFilename() != null) {
+					BoardFileVO boardFile = new BoardFileVO();
+					
+					boardFile = FileUtils.parseFileInfo(file, attachPath);
+					
+					fileList.add(boardFile);
+				}
+			}
 		}
+		// 첨부파일에 boardNo를 매핑하기 위해서
+		// insert후 boardNo(insert된 게시글의 boardNo)를 리턴하여 사용한다.		
+		boardService.insertBoard(boardVO, fileList);
 		
 		// 등록 후 게시글 목록으로 이동
-		return "redirect:/board/getBoardList.do";
+		//return "redirect:/board/getBoardList.do";
 		// 등록 후 게시글 상세로 이동
-		//return "redirect:/board/getBoard.do?boardNo=" + boardVO.getBoardNo();
+		return "redirect:/board/getBoard.do?boardNo=" + boardVO.getBoardNo();
 	}
 	
 	// 공지 등록 화면으로 이동
@@ -135,11 +163,11 @@ public class BoardController {
 		return "redirect:/board/getAdminboard.do?boardNo=" + boardVO.getBoardNo();
 	}
 	
-	// 게시판으로 이동
-	@GetMapping("/getBoardList.do")
-	public String getBoardListView() {
-		return "board/getBoardList";
-	}
+//	// 게시판으로 이동
+//	@GetMapping("/getBoardList.do")
+//	public String getBoardListView() {
+//		return "board/getBoardList";
+//	}
 	
 	// 게시판에서 홈(index)으로 이동
 	@GetMapping("/index.do")
@@ -161,13 +189,128 @@ public class BoardController {
 		if (paramMap.get("searchKeyword") != null && !paramMap.get("searchKeyword").equals("")) {
 			model.addAttribute("searchKeyword", paramMap.get("searchKeyword"));
 		}
+		if (paramMap.get("boardCatecd") != null && !paramMap.get("boardCatecd").equals("")) {
+			model.addAttribute("boardCatecd", paramMap.get("boardCatecd"));
+		}
+		
 		
 		// 검색했을때, 검색한 조건만 가져와야 하기 떄문에
 		int total = boardService.getBoardTotalCnt(paramMap);
-		
 		model.addAttribute("pageVO", new PageVO(cri, total));
 		
 		return "board/getBoardList";
 	}
 	
+	// 게시글 상세 조회
+	@RequestMapping("/getBoard.do")
+	public String getBoard(@RequestParam("boardNo") int boardNo, Model model) {
+		BoardVO board = boardService.getBoard(boardNo);
+		// 첨부파일 리스트 조회
+		List<BoardFileVO> fileList = boardService.getBoardFileList(boardNo);
+		
+		model.addAttribute("board", board);
+		model.addAttribute("boardFileList", fileList);
+		
+		return "board/getBoard";
+	}
+	
+	// 공지글 상세 조회
+	@RequestMapping("/getAdminboard.do")
+	public String getAdminboard(@RequestParam("boardNo") int boardNo, Model model) {
+		BoardVO adminboard = boardService.getAdminboard(boardNo);
+		
+		model.addAttribute("board", adminboard);
+		
+		return "board/getAdminboard";
+	}
+	
+	// 조회수 증가
+	@RequestMapping("/updateBoardCnt.do")
+	public String updateBoardCnt(@RequestParam("boardNo") int boardNo) {
+		// 조회수 증가
+		boardService.updateBoardCnt(boardNo);
+		
+		return "redirect:/board/getBoard.do?boardNo=" + boardNo;
+	}
+	
+	//게시글 수정
+	@PostMapping("/updateBoard.do")
+	public String updateBoard(BoardVO boardVO, MultipartFile[] uploadFiles, 
+			MultipartFile[] changedFiles, HttpServletRequest request, @RequestParam("originFiles") String originFiles) throws IOException {
+		// JSON String 데이터를 List로 변경
+		List<BoardFileVO> originFileList = new ObjectMapper().readValue(originFiles, 
+				new TypeReference<List<BoardFileVO>>() {});
+		
+		String attachPath = request.getSession().getServletContext().getRealPath("/") 
+				+ "/upload/";
+					
+		File directory = new File(attachPath);
+		
+		// 해당 폴더가 존재하지 않으면 폴더 생성
+		if(!directory.exists()) {
+			directory.mkdir();
+		}
+		
+		// 수정되거나 삭제되거나 추가된 파일정보가 담기는 List
+		List<BoardFileVO> uFileList = new ArrayList<BoardFileVO>();
+			
+		for(int i = 0; i < originFileList.size(); i++) {
+			if(originFileList.get(i).getFileStatus().equals("U")) {
+				for(int j = 0; j < changedFiles.length; j++) {
+					if(originFileList.get(i).getNewFileNm().equals(changedFiles[j].getOriginalFilename())) {
+						BoardFileVO boardFileVO = new BoardFileVO();
+						
+						MultipartFile file = changedFiles[j];
+						
+						boardFileVO = FileUtils.parseFileInfo(file, attachPath);
+						
+						// 수정될 내용 추가하는 부분은 따로 작성
+						boardFileVO.setBoardNo(originFileList.get(i).getBoardNo());
+						boardFileVO.setFileNo(originFileList.get(i).getFileNo());
+						boardFileVO.setFileStatus("U");
+						
+						uFileList.add(boardFileVO);
+					}
+				}
+			} else if(originFileList.get(i).getFileStatus().equals("D")) {
+				BoardFileVO boardFileVO = new BoardFileVO();
+				
+				boardFileVO.setBoardNo(originFileList.get(i).getBoardNo());
+				boardFileVO.setFileNo(originFileList.get(i).getFileNo());
+				boardFileVO.setFileStatus("D");
+				
+				// 실제 파일 삭제 처리
+				// 현재 예제에서는 업로드 경로가 같아서 attachPath로 사용했지만
+				// 업로드 경로가 달라질 경우 화면에서 받아온 파일경로로 사용한다.
+				File dFile = new File(attachPath + originFileList.get(i).getFileName());
+				dFile.delete();
+				
+				uFileList.add(boardFileVO);
+			}
+						
+		}
+		
+		if(uploadFiles.length > 0) {
+			for(int i = 0; i < uploadFiles.length; i++) {
+				MultipartFile file = uploadFiles[i];
+				
+				if(!file.getOriginalFilename().equals("") &&
+					file.getOriginalFilename() != null) {
+					BoardFileVO boardFileVO = new BoardFileVO();
+					
+					boardFileVO = FileUtils.parseFileInfo(file, attachPath);
+					
+					boardFileVO.setBoardNo(boardVO.getBoardNo());
+					boardFileVO.setFileStatus("I");
+					
+					uFileList.add(boardFileVO);
+					
+				}
+			}
+		}
+		
+		boardService.updateBoard(boardVO, uFileList);
+		
+		return "redirect:/board/getBoard.do?boardNo=" + boardVO.getBoardNo();
+	}
 }

@@ -6,13 +6,13 @@
 <meta charset="UTF-8">
 <title>공지 쓰기</title>
 <style>
-	 #container { width: 800px; margin: 0 auto;}
+	 #container { width: 800px; margin: 0 auto; padding-top: 30px; padding-bottom: 100px;}
 	 #category { width: 15%; height: 28px; margin-bottom: 10px;}
 	 select option[value=""][disabled] {
 	   display: none;
 	 }
-	 #title { margin-bottom: 10px; width:90%; height: 30px; border-width: 0 0 1px 0; font-size: 18px;}
-	 #content { margin-bottom: 5px;}
+	 #title { margin-bottom: 10px; width:100%; height: 30px; border-width: 0 0 1px 0; font-size: 18px;}
+	 #boardMain { margin-bottom: 5px;}
 	 #btns { margin: 10px;}
 	 #btns>button { width: 80px; height: 30px; font-size: 18px;}
 	 #btnList { float: left;}
@@ -33,14 +33,28 @@
 		<input type="text" name="boardTitle" id="boardTitle" placeholder="제목"><br>
 		<label for="userId" id="userId">작성자: </label><input type="text" name="userId" value="${loginUser.userId}[관리자]" readonly><br>
 		<textarea name="boardMain" id="boardMain" cols="116" rows="30"></textarea>
+		<div id="btns">
+			<button type="button" id="btnList" onclick="location.href='/board/getAdminboardList.do'">목록</button>
+			<button type="button" id="btnDone" onclick="location.href='/board/insertAdminboard.do'">등록</button>
+			<button type="button" id="btnCancel" onclick="history.back();">취소</button>
+		</div>
 	</form>
-	<div id="btns">
-		<button type="button" id="btnList" onclick="location.href='/board/getAdminboardList.do'">목록</button>
-		<button type="button" id="btnDone" onclick="location.href='/board/insertAdminboard.do'">등록</button>
-		<button type="button" id="btnCancel" onclick="history.back();">취소</button>
-	</div>
 
 </div>
 <jsp:include page="${pageContext.request.contextPath }/footer.jsp"></jsp:include>
+<script>
+	$("#btnDone").click(function() {
+		if(!$("#boardTitle").val()) {
+			alert("제목을 입력해주세요.");
+			$("#boardTitle").focus();
+			return false;
+		}
+		if(!$("#boardMain").val()) {
+			alert("내용을 입력해주세요.");
+			$("#boardMain").focus();
+			return false;
+		}	
+	})
+</script>
 </body>
 </html>

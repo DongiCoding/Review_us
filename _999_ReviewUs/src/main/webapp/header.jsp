@@ -66,16 +66,16 @@
 		<nav>
 			<ul class="main-nav">
 				<li>
-					<a href="/board/getBoardList.do"><img src="../images/bars.png" width="30px">&ensp;BARS & PUBS&emsp;</a>
+					<a href="/board/getBoardList.do?boardCatecd=3"><img src="../images/bars.png" width="30px">&ensp;BARS & PUBS&emsp;</a>
 				</li>			
 				<li>
-					<a href="/board/getBoardList.do"><img src="../images/cupcake.png" width="30px">&ensp;DESSERT PLACES&emsp;</a>
+					<a href="/board/getBoardList.do?boardCatecd=2"><img src="../images/cupcake.png" width="30px">&ensp;DESSERT PLACES&emsp;</a>
 				</li>			
 				<li>
-					<a href="/board/getBoardList.do"><img src="../images/restaurant.png" width="30px">&ensp;RESTAURANTS&emsp;</a>
+					<a href="/board/getBoardList.do?boardCatecd=4"><img src="../images/restaurant.png" width="30px">&ensp;RESTAURANTS&emsp;</a>
 				</li>			
 				<li>
-					<a href="/board/getBoardList.do"><img src="../images/hotel.png" width="30px">&ensp;HOTEL</a>
+					<a href="/board/getBoardList.doboardCatecd=1"><img src="../images/hotel.png" width="30px">&ensp;HOTEL</a>
 				</li>			
 			</ul>
 		</nav>
